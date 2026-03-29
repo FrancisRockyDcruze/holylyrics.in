@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/holylyrics.in/',
+  base: 'https://francisrockydcruze.github.io/holylyrics.in/',
   plugins: [
     react({
       babel: {
