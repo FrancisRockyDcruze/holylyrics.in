@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://FrancisRockyDcruze.github.io/holylyrics.in",
+  "homepage": "https://francisrockydcruze.github.io/holylyrics.in",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
