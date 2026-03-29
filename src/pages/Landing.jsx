@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react"; 
 import { getSongs } from "../services/api";
-import { filterSongsByLanguage, getCurrentSongs, getTotalPages, loadInitialSong } from "../utils/songUtils";
+import { 
+  filterSongsByLanguage, 
+  getCurrentSongs, 
+  getTotalPages, 
+  loadInitialSong 
+} from "../utils/songUtils";
 import { saveFavoriteToSheet } from "../services/fav_api";
 
 export default function Landing() {
@@ -10,66 +15,69 @@ export default function Landing() {
   const [songsPerPage] = useState(20);             
   const [selectedSong, setSelectedSong] = useState(null); 
   const [search, setSearch] = useState("");
-  // const [favorites, setFavorites] = useState([]);
+
+  // Filtered and paginated songs
   const filteredSongs = filterSongsByLanguage(songs, language);
   const currentSongs = getCurrentSongs(filteredSongs, page, songsPerPage);
   const totalPages = getTotalPages(filteredSongs, songsPerPage);
 
+  // Load songs on mount
   useEffect(() => {
+    const loadSongs = async () => {
+      try {
+        const data = await getSongs();
+        if (data && data.length > 0) {
+          setSongs(data);
+          setSelectedSong(loadInitialSong(data)); // default first song of English
+        }
+      } catch (err) {
+        console.error("Failed to load songs:", err);
+      }
+    };
+
     loadSongs();
-    // setSelectedSong(firstSong);
   }, []);
 
+  // Update selected song when page, language, or songs change
   useEffect(() => {
     if (currentSongs.length > 0) {
       setSelectedSong(currentSongs[0]);
     }
-  }, [page, language, songs]);
+  }, [currentSongs]);
 
-  useEffect(() => {
-  if (songs.length > 0) {
-    const filtered = filterSongsByLanguage(songs, language);
-    const firstSong = filtered[0] || null;
-    setSelectedSong(firstSong); // set first song of current language/page
-  }
-}, [songs, language]);
+  // Safe toggle favorite function
+  const toggleFavorite = async (song) => {
+    const newFav = song["Fav Added"] === 1 ? 0 : 1;
 
-const toggleFavorite = async (song) => {
-  const newFav = song["Fav Added"] == 1 ? 0 : 1;
+    // update UI instantly
+    setSongs((prevSongs) =>
+      prevSongs.map((s) => (s.id === song.id ? { ...s, "Fav Added": newFav } : s))
+    );
 
-  // update UI instantly
-  const updatedSongs = songs.map((s) =>
-    s.id === song.id ? { ...s, "Fav Added": newFav } : s
-  );
+    try {
+      await saveFavoriteToSheet(song, newFav);
+    } catch (err) {
+      console.warn("Could not save favorite to sheet:", err);
+    }
+  };
 
-  setSongs(updatedSongs);
+  // Filter songs for search
+  const filteredSearchSongs = songs
+    .filter((song) => song.Searchkey.toLowerCase().includes(search.toLowerCase()))
+    .slice(0, 20);
 
-  await saveFavoriteToSheet(song, newFav);
-};
-
-const filteredSearchSongs = songs.filter((song) =>
-    song.Searchkey.toLowerCase().includes(search.toLowerCase())
-  )
-  .slice(0, 20);
-
-  const loadSongs = async () => {
-    const data = await getSongs();
-    console.log(data);
-
-    setSongs(data);
-    setSelectedSong(loadInitialSong(data)); // default first song of English
-};
-
+  // Pagination controls
   const goToPage = (num) => {
     if (num < 1 || num > totalPages) return;
     setPage(num);
   };
 
+  // Language selection
   const handleLanguageClick = (lang) => {
     setLanguage(lang);
     setPage(1);
     const langSongs = filterSongsByLanguage(songs, lang);
-    setSelectedSong(langSongs[0]);
+    setSelectedSong(langSongs[0] || null);
   };
 
   return (
@@ -95,44 +103,43 @@ const filteredSearchSongs = songs.filter((song) =>
           </div>
 
           {/* Song list */}
-            <div className="overflow-y-auto border rounded-bl rounded-br py-3">
-                <ul className="space-y-0 flex-col w-full">
-                    {currentSongs.map((song, i) => (
-                    <li
-                        key={song.id}
-                        className={`
-                        cursor-pointer
-                        py-1
-                        text-sm
-                        flex items-center justify-center
-                        transition
-                        ${i % 2 === 0 ? "bg-gray-400" : ""}
+          <div className="overflow-y-auto border rounded-bl rounded-br py-3">
+            <ul className="space-y-0 flex-col w-full">
+              {currentSongs.map((song, i) => (
+                <li
+                  key={song.id}
+                  className={`
+                    cursor-pointer
+                    py-1
+                    text-sm
+                    flex items-center justify-center
+                    transition
+                    ${i % 2 === 0 ? "bg-gray-400" : ""}
+                    ${selectedSong?.id === song.id ? "bg-bgColor text-white" : ""}
+                    hover:bg-bgColor
+                    hover:text-white
+                  `}
+                  onClick={() => setSelectedSong(song)}
+                >
+                  {/* SONG TITLE */}
+                  <span onClick={() => setSelectedSong(song)}>
+                    🎵 {song["Title*"]}
+                  </span>
 
-                        ${selectedSong?.id === song.id ? "bg-bgColor text-white" : ""}
-                        hover:bg-bgColor
-                        hover:text-white
-                        `}
-                        onClick={() => setSelectedSong(song)}
-                    >
-                        {/* SONG TITLE */}
-                        <span onClick={() => setSelectedSong(song)}>
-                          🎵 {song["Title*"]}
-                        </span>
-
-                        {/* FAVORITE ICON */}
-                        <span
-                          onClick={(e) => {
-                            e.stopPropagation(); // IMPORTANT (prevents selecting song)
-                            toggleFavorite(song);
-                          }}
-                          className="cursor-pointer"
-                        >
-                          {song["Fav Added"] == 1 ? "❤️" : "🤍"}
-                        </span>
-                    </li>
-                    ))}
+                  {/* FAVORITE ICON */}
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation(); // prevents selecting song
+                      toggleFavorite(song);
+                    }}
+                    className="cursor-pointer"
+                  >
+                    {song["Fav Added"] === 1 ? "❤️" : "🤍"}
+                  </span>
+                </li>
+              ))}
             </ul>
-            </div>
+          </div>
 
           {/* Pagination */}
           <div className="grid grid-cols-5 border rounded">
@@ -145,9 +152,7 @@ const filteredSearchSongs = songs.filter((song) =>
             {Array.from({ length: totalPages }, (_, i) => (
               <button
                 key={i}
-                className={`transition ${
-                  page === i + 1 ? "bg-bgColor text-white" : ""
-                }`}
+                className={`transition ${page === i + 1 ? "bg-bgColor text-white" : ""}`}
                 onClick={() => goToPage(i + 1)}
               >
                 {i + 1}
@@ -164,51 +169,51 @@ const filteredSearchSongs = songs.filter((song) =>
 
         {/* Column 2: Search + Lyrics */}
         <div className="col-span-6 flex flex-col items-center p-4">
-  {/* SEARCH CONTAINER */}
-  <div className="w-full relative py-1 px-2 border-4 border-bgColor rounded-lg">
-    <input
-      type="text"
-      placeholder="Search song in English..."
-      value={search}
-      onChange={(e) => setSearch(e.target.value)}
-      className="w-full text-center py-3"
-    />
+          {/* SEARCH CONTAINER */}
+          <div className="w-full relative py-1 px-2 border-4 border-bgColor rounded-lg">
+            <input
+              type="text"
+              placeholder="Search song in English..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full text-center py-3"
+            />
 
-    {/* SEARCH DROPDOWN */}
-    {search.length >= 3 && (
-      <div className="absolute top-full left-0 w-full bg-gray-100 border max-h-[200px] overflow-y-auto mt-1 z-50 rounded shadow">
-        {filteredSearchSongs.map((song, i) => (
-          <div
-            key={i}
-            className="px-3 py-2 cursor-pointer hover:bg-bgColor hover:text-white text-bgColor"
-            onClick={() => {
-              setSelectedSong(song);
-              setSearch(""); // clear search after selecting
-            }}
-          >
-            {song["Title*"]}
+            {/* SEARCH DROPDOWN */}
+            {search.length >= 3 && (
+              <div className="absolute top-full left-0 w-full bg-gray-100 border max-h-[200px] overflow-y-auto mt-1 z-50 rounded shadow">
+                {filteredSearchSongs.map((song, i) => (
+                  <div
+                    key={i}
+                    className="px-3 py-2 cursor-pointer hover:bg-bgColor hover:text-white text-bgColor"
+                    onClick={() => {
+                      setSelectedSong(song);
+                      setSearch(""); // clear search after selecting
+                    }}
+                  >
+                    {song["Title*"]}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        ))}
-      </div>
-    )}
-  </div>
 
-  {/* LYRICS DISPLAY - untouched */}
-  <div className="py-3 px-6 border w-full flex flex-col items-center justify-center mt-4 border-txtColor">
-    <h3 className="font-bold text-2xl mb-2">
-      {selectedSong ? selectedSong["Title*"] : "Select a song"}
-    </h3>
+          {/* LYRICS DISPLAY */}
+          <div className="py-3 px-6 border w-full flex flex-col items-center justify-center mt-4 border-txtColor">
+            <h3 className="font-bold text-2xl mb-2">
+              {selectedSong ? selectedSong["Title*"] : "Select a song"}
+            </h3>
 
-    <div className="h-[400px] w-full overflow-y-auto text-center leading-relaxed">
-      <div
-        className="whitespace-pre-wrap"
-        dangerouslySetInnerHTML={{
-          __html: selectedSong ? selectedSong["lyrics*"] : "Select a song."
-        }}
-      ></div>
-    </div>
-  </div>
-</div>
+            <div className="h-[400px] w-full overflow-y-auto text-center leading-relaxed">
+              <div
+                className="whitespace-pre-wrap"
+                dangerouslySetInnerHTML={{
+                  __html: selectedSong ? selectedSong["lyrics*"] : "Select a song."
+                }}
+              ></div>
+            </div>
+          </div>
+        </div>
 
         {/* Column 3: Updates + Categories + Ads */}
         <div className="col-span-2 grid grid-rows-[2fr_3fr_1fr]">
