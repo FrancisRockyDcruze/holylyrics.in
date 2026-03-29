@@ -1,4 +1,4 @@
-import Tesseract from "tesseract";
+import Tesseract from "tesseract.js";
 
 let worker = null;
 let currentLang = null;
