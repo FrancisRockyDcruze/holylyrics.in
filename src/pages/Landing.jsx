@@ -22,21 +22,42 @@ export default function Landing() {
   const totalPages = getTotalPages(filteredSongs, songsPerPage);
 
   // Load songs on mount
-  useEffect(() => {
-    const loadSongs = async () => {
-      try {
-        const data = await getSongs();
-        if (data && data.length > 0) {
-          setSongs(data);
-          setSelectedSong(loadInitialSong(data)); // default first song of English
-        }
-      } catch (err) {
-        console.error("Failed to load songs:", err);
-      }
-    };
+//   useEffect(() => {
+//     const loadSongs = async () => {
+//       try {
+//         const data = await getSongs();
+//         if (data && data.length > 0) {
+//           setSongs(data);
+//           setSelectedSong(loadInitialSong(data)); // default first song of English
+//         }
+//       } catch (err) {
+//         console.error("Failed to load songs:", err);
+//       }
+//     };
 
-    loadSongs();
-  }, []);
+//     loadSongs();
+//   }, []);
+
+useEffect(() => {
+  const loadSongs = async () => {
+    try {
+      const data = await getSongs();
+      console.log("Songs:", data);
+
+      if (!data || data.length === 0) {
+        console.warn("No songs loaded");
+        return;
+      }
+
+      setSongs(data);
+      setSelectedSong(loadInitialSong(data));
+    } catch (err) {
+      console.error("API failed:", err);
+    }
+  };
+
+  loadSongs();
+}, []);
 
   // Update selected song when page, language, or songs change
   useEffect(() => {
