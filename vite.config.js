@@ -3,7 +3,8 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/holylyrics.in/',
+  // base: '/holylyrics.in/',
+  base: "/",
   plugins: [
     react({
       babel: {
@@ -12,6 +13,6 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: '/dist', // default, optional
+    outDir: './dist', // default, optional
   },
 })
