@@ -4,7 +4,8 @@ export function pdfFormats(
     leftCol_Arr,
     rightCol_Arr,
     totalPg,
-    line_Cntr
+    line_Cntr,
+    isMobilePreview
 ){  
     let fullLyrics_Arr = [];   
     let AllTitle_Arr = []; 
@@ -16,20 +17,41 @@ export function pdfFormats(
     let Mkcounter = 0;
     let globalKey = 0;
 
+    console.log(isMobilePreview);
+    
+    const titleClassfirstline = isMobilePreview ? "font-bold pb-2 text-[16px] underline" : "font-bold py-3 text-lg underline";
+    const titleClass = isMobilePreview ? "font-bold py-2 pt-4 text-[16px] underline" : "font-bold py-3 text-lg underline";
+    const lineClass = isMobilePreview ? "text-[14px]" : "text-sm";
+// const lineClass = isMobilePreview ? "text-sm" : "text-sm";
     if(songs[0] != undefined) 
     {
+        let firstLine = 1;
+
         favSogList.forEach(s => {
             
            let titleStr = s["Title*"];
            let arrStr = (s["lyrics*"]);
            let lines = arrStr.split(/<br\s*\/?>/);
            
-           Title_Lyrics_Arr.push(<div key={`${globalKey++}`} className="font-bold py-3 text-lg underline">{titleStr}</div>);
-           lines.forEach((line,idx) => {
-                Title_Lyrics_Arr.push(<div key={`${globalKey++}-title-${titleStr}-line-${idx}`} className="text-sm">{line}</div>);
-                
-            });
-            
+
+           if(firstLine == 1)
+           {
+               Title_Lyrics_Arr.push(<div key={`${globalKey++}`} className={titleClassfirstline}>{titleStr}</div>);
+               lines.forEach((line,idx) => {
+                    Title_Lyrics_Arr.push(<div key={`${globalKey++}-title-${titleStr}-line-${idx}`} className={lineClass}>{line}</div>);
+                    
+                });
+           }
+            else
+            {
+                Title_Lyrics_Arr.push(<div key={`${globalKey++}`} className={titleClass}>{titleStr}</div>);
+                lines.forEach((line,idx) => {
+                     Title_Lyrics_Arr.push(<div key={`${globalKey++}-title-${titleStr}-line-${idx}`} className={lineClass}>{line}</div>);
+                     
+                 });
+            }
+            firstLine++;
+
            fullLyrics_Arr.push(...lines); // add all lines
            AllTitle_Arr.push(titleStr);
         });
