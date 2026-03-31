@@ -93,12 +93,12 @@ export default function UploadSong(){
   }, [])
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white shadow rounded mt-10">
+    <div className="max-w-lg mx-auto p-4 sm:p-6 bg-white shadow rounded mt-4 sm:mt-10">
         <div className="grid grid-cols-12 gap-2 p-2">
-            <h2 className="text-2xl font-bold mb-6 text-center col-span-10 ml-20">Upload New Song</h2>
-            <h1 className="text-2xl font-bold mb-6 text-end col-span-2">#{id}</h1>
+            <h2 className="text-lg sm:text-2xl font-bold mb-6 text-center col-span-10 ml-10 sm:ml-20">Upload New Song</h2>
+            <h1 className="text-2xl text-lg sm:text-2xl font-bold mb-6 text-end col-span-2">#{id}</h1>
         </div>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
         {/* Title */}
         <input
           type="text"
@@ -106,17 +106,17 @@ export default function UploadSong(){
           value={addsong.title}
           required
           onChange={(e) => setAddsong({ ...addsong, title: e.target.value })}
-          className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full p-2 sm:p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
         />
 
         {/* Category */}
         <input
           type="text"
-          placeholder="Enter Category"
+          placeholder="Enter Category (English only)"
           value={addsong.category}
           required
           onChange={(e) => setAddsong({ ...addsong, category: e.target.value })}
-          className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full p-2 sm:p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
         />
 
         {/* lyrics */}
@@ -126,14 +126,14 @@ export default function UploadSong(){
           value={addsong.lyrics}
           required
           onChange={(e) => setAddsong({ ...addsong, lyrics: e.target.value })}
-          className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full p-2 sm:p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
         />
 
         {/* Language Select */}
         <select
           value={addsong.language}
           onChange={(e) => setAddsong({ ...addsong, language: e.target.value })}
-          className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full p-2 sm:p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm sm:text-base"
         >
           <option value="English">English</option>
           <option value="Bengali">Bengali</option>
@@ -143,15 +143,15 @@ export default function UploadSong(){
         {/* Searchkey */}
         <input
           type="text"
-          placeholder="Enter Search key/word (use , for seperator)"
+          placeholder="Searchkey (comma seperator & English only)"
           value={addsong.genre}
           required
           onChange={(e) => setAddsong({ ...addsong, searchkey: e.target.value })}
-          className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full p-2 sm:p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-xs sm:text-base"
         />
 
         {/* Upload files (eng ben hin)  */}
-        <div className="flex gap-4 justify-between">
+        <div className="flex gap-2 justify-between">
         {/* Hidden file inputs */}
         <input
           type="file"
@@ -178,21 +178,21 @@ export default function UploadSong(){
         {/* Custom upload buttons */}
         <button
           type="button"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="bg-blue-500 text-white py-2 rounded text-sm px-3 sm:text-lg"
           onClick={() => engRef.current.click()}
         >
           Upload English
         </button>
         <button
           type="button"
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          className="bg-red-500 text-white py-2 rounded text-sm px-3 sm:text-lg"
           onClick={() => hinRef.current.click()}
         >
           Upload Hindi
         </button>
         <button
           type="button"
-          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          className="bg-green-500 text-white py-2 rounded text-sm px-3 sm:text-lg"
           onClick={() => benRef.current.click()}
         >
           Upload Bengali
@@ -209,7 +209,7 @@ export default function UploadSong(){
       </form>
 
       {status && (
-        <p className="mt-4 text-center text-sm text-gray-700">{status}</p>
+        <p className="mt-3 text-center text-xs sm:text-sm text-gray-700">{status}</p>
       )}
     </div>
   );

@@ -3,6 +3,7 @@ import React, { useState, useRef } from "react";
 import { filterSongsByLanguage } from "../utils/songUtils";
 import FavMobileLayout from "./FavMobileLayout";
 // import {pdfFormats} from "../utils/pdfFormat";
+import UploadSong from "./UploadSong";
 
 export default function MobileLayout({
   songs,
@@ -39,7 +40,9 @@ export default function MobileLayout({
     setOverlay("song");
   };
 
-  const handleUpload = () => alert("Upload functionality not implemented yet");
+  const handleUpload = () => {
+    {UploadSong}
+  }
 
   // ---------------- Overlays ----------------
   const renderOverlay = () => {
@@ -117,17 +120,49 @@ export default function MobileLayout({
         </div>
       );
     }
+
+    if(overlay === "uploadSong")
+    {
+      return(
+       
+    <div className="fixed inset-0 bg-white z-50 flex flex-col">
+
+      {/* SAME HEADER STYLE AS LANDING */}
+      <div className="flex justify-between items-center p-4 border-b bg-orange-100">
+        
+        {/* Left → Back */}
+        <button
+          onClick={() => setOverlay(null)}
+          className="px-3 py-1 border rounded"
+        >
+          ⬅ Back
+        </button>
+
+        {/* Center → App Name */}
+        <h1 className="text-xl font-bold">Holy Lyrical</h1>
+
+        {/* Right → Empty (keeps alignment same as landing) */}
+        <div className="w-[70px]"></div>
+      </div>
+
+      {/* CONTENT */}
+      <div className="flex-1 overflow-y-auto p-2">
+        <UploadSong />
+      </div>
+    </div>
+      )
+    }
   };
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen flex flex-col bg-gray-400">
       {/* Only show main landing when NOT showing Favorites */}
       {overlay !== "favorites" && (
         <>
           {/* ---------------- Header ---------------- */}
           <div className="flex justify-between items-center p-4 border-b bg-orange-100">
             <h1 className="text-xl font-bold">Holy Lyrical</h1>
-            <button onClick={handleUpload} className="px-3 py-1 border rounded">⬆ Upload</button>
+            <button onClick={() => setOverlay("uploadSong")} className="px-3 py-1 border rounded">⬆ Upload</button>
           </div>
 
           {/* ---------------- Language Selector ---------------- */}
@@ -159,10 +194,23 @@ export default function MobileLayout({
               {searchedSongs.map((song) => (
                 <button
                   key={song.id}
-                  className="p-3 border rounded text-left hover:bg-bgColor hover:text-white"
+                  className="p-3 border rounded text-left hover:bg-bgColor hover:text-white grid grid-cols-10 bg-white"
                   onClick={() => openSong(song)}
                 >
+                <span className="col-span-9">
                   {song["Title*"]}
+                </span>
+
+                  {/* FAVORITE ICON */}
+                  <span
+                    className="col-span-1 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation(); // prevents selecting song
+                      toggleFavorite(song);
+                    }}
+                  >
+                    {song["Fav Added"] === 1 ? "❤️" : "🤍"}
+                  </span>
                 </button>
               ))}
             </div>
@@ -170,14 +218,33 @@ export default function MobileLayout({
 
           {/* ---------------- Bottom Tabs ---------------- */}
           <div
-            className={`fixed bottom-0 left-0 w-full bg-white border-t transition-transform duration-300 ${showBottomTabs ? "translate-y-0" : "translate-y-full"}`}
+            className={`fixed bottom-0 left-0 w-full text-white border-t transition-transform duration-300 
+            ${showBottomTabs ? "translate-y-0" : "translate-y-full"}`}
           >
-            <div className="flex justify-around py-3">
-              <button className="text-center" onClick={() => setOverlay("categories")}>Categories</button>
-              <button className="text-center" onClick={() => setOverlay("favorites")}>Favorites</button>
-              <button className="text-center" onClick={() => setOverlay("updates")}>Updates</button>
+            <div className="flex">
+              <button
+                className="flex-1 text-center py-2 bg-orange-500/80 rounded-tr-lg hover:bg-orange-300"
+                onClick={() => setOverlay("categories")}
+              >
+                Categories
+              </button>
+
+              <button
+                className="flex-1 text-center py-2 bg-orange-500/80 rounded-t-lg hover:bg-orange-300"
+                onClick={() => setOverlay("favorites")}
+              >
+                Favorites
+              </button>
+
+              <button
+                className="flex-1 text-center py-2 bg-orange-500/80 rounded-tl-lg hover:bg-orange-300"
+                onClick={() => setOverlay("updates")}
+              >
+                Updates
+              </button>
             </div>
           </div>
+
         </>
       )}
 
