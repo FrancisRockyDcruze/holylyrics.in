@@ -24,3 +24,23 @@ export const loadInitialSong = (songs, language = "english") => {
   );
   return langSongs[0] || null;
 };
+
+export const getCategorySongs = (songs, tag) => {
+  const categorySongs = songs.filter(
+    (s) => {
+      const categories = s["category*"].split(',').map(c => c.trim());
+      return categories.includes(tag);
+    }
+  )
+  // return categorySongs[0] || null;
+  return categorySongs;
+};
+
+  export const getAllTags = (songs) => {
+    const allTags = songs
+    .flatMap(song => song["category*"].split(",")) // split categories
+    .map(tag => tag.trim()) // remove extra spaces
+    .filter(tag => tag.length > 0); // remove empty values
+
+    return [...new Set(allTags)]; // remove duplicates
+  }

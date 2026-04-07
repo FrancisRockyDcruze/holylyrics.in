@@ -1,4 +1,4 @@
-import { use, useEffect,useState } from "react";
+import { useEffect,useState } from "react";
 import { getSongs } from "../services/api";
 import { pdfFormats } from "../utils/pdfFormat";
 import { printPDF } from "../utils/pdfGenerator";
@@ -15,6 +15,7 @@ export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFa
     const [headerText, setHeaderText] = useState("Merry Christmas");
     const [customHeader, setCustomHeader] = useState("");
     const [loading, setLoading] = useState(false);
+    const [noOfLine, setNoOfLine] = useState(36);
 
     const loadSongs = async () => {
         try {
@@ -71,7 +72,7 @@ export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFa
     let leftCol_Arr = [];
     let rightCol_Arr = [];
     let totalPg = [];
-    let line_Cntr = 38; 
+    let line_Cntr = noOfLine; 
 
     const result = pdfFormats(
         songs,
@@ -158,12 +159,10 @@ export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFa
                             >
                                 ≡
                             </span>
+
+                            {/* Title with removing favourite */}
                             <span>{song["Title*"]}</span>
                             </div>
-
-                            {/* <span className="text-sm text-gray-400">
-                            {song["Fav Added"] == 1 ? "❤️" : "🤍"}
-                            </span> */}
                             <span
                           onClick={(e) => {
                             e.stopPropagation(); // IMPORTANT (prevents selecting song)
@@ -190,7 +189,7 @@ export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFa
             <div className="max-h-[80vh] overflow-auto w-full px-3 flex flex-col items-center bg-[#f4f1ea]" id="printPdf">
                 {totalPg.map((_, i) => (
                 <div key={`lvl-${i}`}>
-                    <div key={i} className="bg-white my-2 w-[210mm] min-h-[250mm] shadow-lg px-10 py-2 font-serif text-gray-900 border-b-2 border-black">
+                    <div key={i} className="bg-white my-2 w-[210mm] min-h-[250mm] shadow-lg px-10 py-2 pb-4 font-serif text-gray-900 border-b-2 border-black">
                     {/* Title fs-48 */}
                     {i == 0 ? (
                         <>
@@ -198,14 +197,11 @@ export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFa
                                 {displayHeader}
                             </div>
                             <div className="text-base py-2" style={{"height" : "950px"}}>
-                                <div className="print flex gap-2">
-                                    
-                                    <div className="left border bg-orange-100 text-center py-2 text-xs" style={{ "max-height" : "950px", "width": "355px", whiteSpace: "pre-line"}}>
-                                        
-                                        {/* {leftCol_Arr[i].join("\n")} */}
+                                <div className="print flex gap-2 pb-4" style={{ }}>
+                                    <div className="left border bg-orange-100 text-center py-2 text-xs" style={{"Height" : "900px", "width": "355px", whiteSpace: "pre-line"}}>
                                         {leftCol_Arr[i]}
                                     </div>
-                                    <div className="right border bg-gray-100 text-center py-2 text-xs" style={{"max-height" : "950px", "width": "355px",whiteSpace: "pre-line"}}>
+                                    <div className="right border bg-gray-100 text-center py-2 text-xs" style={{"Height" : "900px", "width": "355px",whiteSpace: "pre-line"}}>
                                         {rightCol_Arr[i]}
                                     </div>
                                 </div>
@@ -218,12 +214,11 @@ export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFa
                         <>
                             {/* Content */}
                         <div className="text-base py-2" style={{"height" : "950px"}}>
-                            <div className="print flex gap-2">
-
-                                <div className="left border bg-orange-100 text-center py-3 text-xs" style={{"max-height" : "950px","width": "355px", whiteSpace: "pre-line"}}>
+                            <div className="print flex gap-2 pb-4" style={{ }}>
+                                <div className="left border bg-orange-100 text-center py-3 text-xs" style={{"Height" : "900px", "width": "355px", whiteSpace: "pre-line"}}>
                                     {leftCol_Arr[i]}
                                 </div> 
-                                <div className="right border bg-gray-100 text-center py-3 text-xs" style={{"max-height" : "950px","width": "355px",whiteSpace: "pre-line"}}>
+                                <div className="right border bg-gray-100 text-center py-3 text-xs" style={{"Height" : "900px", "width": "355px",whiteSpace: "pre-line"}}>
                                     {rightCol_Arr[i]}
                                 </div>
                             </div>
@@ -276,6 +271,18 @@ export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFa
                 <button onClick={handlePrint} className="bg-bgColor mt-5 px-4 py-2 text-white rounded">
                     Print / Save PDF
                 </button>
+
+                <div className="bg-orange-200 my-2">
+                <label className="text-sm font-bold flex items-center justify-center px-1">Adjust Lines</label>
+                    <input
+                        type="number"
+                        placeholder="Enter No. of Line"
+                        className="bg-gray-100 text-xs text-center border p-1 rounded mt-2 w-full"
+                        value={noOfLine}
+                        onChange={(e) => setNoOfLine(Number(e.target.value))
+                        }
+                    />
+                </div>
             </div>
         </main>
     </div>

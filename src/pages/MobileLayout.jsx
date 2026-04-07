@@ -1,9 +1,13 @@
-// MobileLayout.jsx
 import React, { useState, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { filterSongsByLanguage } from "../utils/songUtils";
 import FavMobileLayout from "./FavMobileLayout";
-// import {pdfFormats} from "../utils/pdfFormat";
 import UploadSong from "./UploadSong";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { getCategorySongs } from "../utils/songUtils";
+import { getAllTags } from "../utils/songUtils";
+import Footer from "../components/Footer";
 
 export default function MobileLayout({
   songs,
@@ -15,158 +19,258 @@ export default function MobileLayout({
   loading,
   reload
 }) {
-
-  const [overlay, setOverlay] = useState(null); // "categories" | "favorites" | "updates" | "song"
+  const navigate = useNavigate();
+  const location = useLocation();
   const [showBottomTabs, setShowBottomTabs] = useState(true);
   const lastScroll = useRef(0);
   const [language, setLanguage] = useState("English");
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [categorySongs, setCategorySongs] = useState([]);
+  // const [allTags, setAllTags] = useState([]);
 
   const handleScroll = (e) => {
     const scrollTop = e.target.scrollTop;
 
-    if (scrollTop > lastScroll.current + 20) setShowBottomTabs(false);
+    if (scrollTop > lastScroll.current + 10) setShowBottomTabs(false);
     else if (scrollTop < lastScroll.current - 20 || scrollTop < 50) setShowBottomTabs(true);
 
     lastScroll.current = scrollTop;
   };
-
   const filteredSongs = filterSongsByLanguage(songs, language);
   const searchedSongs = filteredSongs.filter((song) =>
     song.Searchkey.toLowerCase().includes(search.toLowerCase())
   );
+  const allTags = getAllTags(songs);
 
+  // ---------------- Navigation ----------------
   const openSong = (song) => {
     setSelectedSong(song);
-    setOverlay("song");
+    navigate(`/song/${song.id}`);
   };
 
-  const handleUpload = () => {
-    {UploadSong}
-  }
+  const goBack = () => {
+    navigate(-1);   // better than "/"
+  };
+
+  const categories = selectedSong?.["category*"]
+  ?.split(",")
+  .map(tag => tag.trim())
+
+  const handleTagClick = (tag) => {
+  const catSongs = getCategorySongs(songs, tag); // true = return all songs
+  // console.log(catSongs);
+
+  setSelectedCategory(tag);
+  setCategorySongs(catSongs);
+};
+
+  // detect route
+  const path = location.pathname;
+
+  const isSong = path.startsWith("/song");
+  const isCategories = path === "/categories";
+  const isFavorites = path === "/favorites";
+  const isUpdates = path === "/updates";
+  const isUpload = path === "/upload";
+  const isCategoryOverlay = path === "/category";
 
   // ---------------- Overlays ----------------
   const renderOverlay = () => {
-    if (!overlay) return null;
-    const closeOverlay = () => setOverlay(null);
+    if (!isSong && !isCategories && !isFavorites && !isUpdates && !isUpload && !isCategoryOverlay) return null;
 
-    if (overlay === "song") {
+    if (isSong) {
       return (
         <div className="fixed inset-0 bg-white z-50 flex flex-col">
           <div className="p-4 flex justify-between items-center border-b">
-            <button onClick={closeOverlay} className="text-xl">⬅ Back</button>
-            <h2 className="text-lg font-bold">{selectedSong?.["Title*"]}</h2>
-            <button
-              onClick={() => toggleFavorite(selectedSong)}
-              className="text-xl"
+            <button onClick={goBack} className="text-lg">⬅ Back</button>
+            <h2 className="text-lg font-bold mr-8 text-center">{selectedSong?.["Title*"]}</h2>
+            <span
+              className="col-span-1 cursor-pointer text-xl"
+              onClick={(e) => {
+                // e.stopPropagation();
+                toggleFavorite(selectedSong);
+
+                // Update the selectedSong reference to trigger re-render
+                setSelectedSong((prev) => ({
+                  ...prev,
+                  "Fav Added": prev["Fav Added"] === 1 ? 0 : 1,
+                }));
+              }}
             >
               {selectedSong?.["Fav Added"] === 1 ? "❤️" : "🤍"}
-            </button>
+            </span>
           </div>
+
           <div className="p-4 overflow-y-auto flex-1">
             <div
-              className="whitespace-pre-wrap"
+              className="whitespace-pre-wrap text-center"
               dangerouslySetInnerHTML={{ __html: selectedSong?.["lyrics*"] }}
             />
+             <Footer/>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-2 my-3">
+              {categories?.map((tag, index) => (
+                <div
+                  key={index}
+                  onClick={() => {
+                        handleTagClick(tag); // populate categorySongs & selectedCategory
+
+                    navigate("/category")}}
+                  className="bg-orange-500 text-white px-2 py-1 rounded text-sm font-bold cursor-pointer select-none"
+                >
+                  🏷️ {tag}
+                </div>
+              ))}
+             
           </div>
         </div>
       );
     }
 
-    if (overlay === "categories") {
+    if (isCategories) {
       return (
         <div className="fixed inset-0 bg-white z-50 flex flex-col">
           <div className="p-4 flex justify-between items-center border-b">
-            <button onClick={closeOverlay} className="text-xl">⬅ Back</button>
-            <h2 className="text-lg font-bold">Categories</h2>
-            <div></div>
+            <button onClick={goBack} className="text-sm border rounded px-3 py-1">⬅ Back</button>
+            <h2 className="text-lg font-bold mr-3">Categories</h2>
+            <div className="text-3xl text-bgColor border rounded px-3 py-0" onClick={() => navigate("/")}>🏠︎</div>
           </div>
-          <div className="p-4 flex flex-col space-y-2">
-            {["Praise", "Worship", "Christmas"].map((cat) => (
+
+          <div className="p-4 flex flex-col space-y-2 bg-bgColor mb-3 overflow-y-auto flex-1">
+            {allTags.map((cat) => (
               <button
+                onClick={() => {
+                  handleTagClick(cat); // populate categorySongs & selectedCategory
+                  navigate("/category")}}
                 key={cat}
-                className="p-3 border rounded text-center hover:bg-bgColor hover:text-white"
+                className="p-3 border rounded text-center bg-white hover:text-white"
               >
-                {cat}
+                🏷️ {cat}
               </button>
             ))}
+            <Footer/>
           </div>
         </div>
       );
     }
 
-    if (overlay === "favorites") {
+    if (isFavorites) {
       return (
         <FavMobileLayout
           songs={songs}
           loading={loading}
           reload={reload}
-          closeFav={() => setOverlay(null)} // unified prop
+        closeFav={goBack}
+        isMobilePreview = {true}
         />
       );
     }
 
-    if (overlay === "updates") {
+    if (isUpdates) {
       return (
-        <div className="fixed inset-0 bg-white z-50 flex flex-col">
-          <div className="p-4 flex justify-between items-center border-b">
-            <button onClick={closeOverlay} className="text-xl">⬅ Back</button>
-            <h2 className="text-lg font-bold">Updates</h2>
-            <div></div>
-          </div>
-          <div className="p-4 flex flex-col space-y-2">
-            <p>Good Friday is coming...</p>
-            <p>New songs added!</p>
+        <div>
+          <div className="fixed inset-0 bg-white z-50 flex flex-col p-2">
+            <div className="p-4 flex justify-between items-center border-b">
+              <button onClick={goBack} className="text-lg border rounded px-3 py-1">⬅ Back</button>
+              <h2 className="text-lg font-bold">Updates</h2>
+              <div className="text-3xl text-bgColor border rounded px-3 py-0" onClick={() => navigate("/")}>🏠︎</div>
+            </div>
+
+            <div className="p-1 flex flex-col space-y-2 bg-bgColor">
+              <div className="bg-bgColor">
+                <p className="p-2 m-2 bg-white rounded">Jesus is Risen</p>
+                <p className="p-2 m-2 bg-white rounded">New songs added!</p>
+              </div>
+              <Footer/>
+            </div>
           </div>
         </div>
       );
     }
 
-    if(overlay === "uploadSong")
-    {
-      return(
-       
-    <div className="fixed inset-0 bg-white z-50 flex flex-col">
+    if (isUpload) {
+      return (
+        <div className="fixed inset-0 bg-white z-50 flex flex-col">
+          <div className="flex justify-between items-center p-4 border-b bg-orange-100">
+            <button onClick={goBack} className="px-3 py-1 border rounded">
+              ⬅ Back
+            </button>
 
-      {/* SAME HEADER STYLE AS LANDING */}
-      <div className="flex justify-between items-center p-4 border-b bg-orange-100">
-        
-        {/* Left → Back */}
-        <button
-          onClick={() => setOverlay(null)}
-          className="px-3 py-1 border rounded"
-        >
-          ⬅ Back
-        </button>
+            <h1 className="text-xl font-bold">Holy Lyrical</h1>
 
-        {/* Center → App Name */}
-        <h1 className="text-xl font-bold">Holy Lyrical</h1>
+            <div className="w-[70px]"></div>
+          </div>
 
-        {/* Right → Empty (keeps alignment same as landing) */}
-        <div className="w-[70px]"></div>
-      </div>
-
-      {/* CONTENT */}
-      <div className="flex-1 overflow-y-auto p-2">
-        <UploadSong />
-      </div>
-    </div>
-      )
+          <div className="flex-1 overflow-y-auto p-2">
+            <UploadSong />
+          </div>
+          <Footer/>
+        </div>
+      );
     }
+
+    if (isCategoryOverlay) {
+      return (
+        <div className="fixed inset-0 bg-white z-50 flex flex-col bg-bgColor">
+          <div className="p-4 flex justify-between items-center border-b bg-orange-4
+          00">
+            <button
+              onClick={goBack}
+              className="text-sm border rounded px-3 py-1"
+            >
+              ⬅ Back
+            </button>
+            <h2 className="text-2xl font-bold text-center mr-3 underline">{selectedCategory}</h2>
+            <h2 className="text-3xl text-bgColor border rounded px-3 py-0"
+            onClick={() => navigate("/")}>🏠︎</h2>
+          </div>
+          {/* {console.log(categorySongs)} */}
+          <div className="p-4 flex flex-col space-y-2 overflow-y-auto bg-bgColor">
+            {categorySongs.length === 0 ? (
+              <p>No songs found for this category.</p>
+            ) : (
+              categorySongs.map((song) => (
+                <button
+                  key={song.id}
+                  className="p-3 border rounded hover:bg-orange-100 cursor-pointer bg-white"
+                  onClick={() => openSong(song)} // optional: open song
+                >
+                  {song["Title*"]}
+                </button>
+              ))
+            )}
+             <Footer/>
+          </div>
+        </div>
+      );
+    }
+
   };
+
+  const { id } = useParams();
+
+    useEffect(() => {
+    if (id && songs.length > 0) {
+        const found = songs.find((s) => s.id.toString() === id);
+        if (found) setSelectedSong(found);
+    }
+    }, [id, songs]);
 
   return (
     <div className="h-screen flex flex-col bg-gray-400">
-      {/* Only show main landing when NOT showing Favorites */}
-      {overlay !== "favorites" && (
+      {!isFavorites && (
         <>
-          {/* ---------------- Header ---------------- */}
+          {/* Header */}
           <div className="flex justify-between items-center p-4 border-b bg-orange-100">
             <h1 className="text-xl font-bold">Holy Lyrical</h1>
-            <button onClick={() => setOverlay("uploadSong")} className="px-3 py-1 border rounded">⬆ Upload</button>
+            <button onClick={() => navigate("/upload")} className="px-3 py-1 border rounded">
+              ⬆ Upload
+            </button>
           </div>
 
-          {/* ---------------- Language Selector ---------------- */}
-          <div className="flex overflow-x-auto p-2 space-x-2 border-b bg-gray-50">
+          {/* Language */}
+          <div className="flex overflow-x-auto px-3 py-2 space-x-2 border-b bg-gray-50 justify-around">
             {["English", "Hindi", "Bengali"].map((lang) => (
               <button
                 key={lang}
@@ -178,11 +282,8 @@ export default function MobileLayout({
             ))}
           </div>
 
-          {/* ---------------- Body: Search + Song List ---------------- */}
-          <div
-            className="flex-1 overflow-y-auto px-4 py-2"
-            onScroll={handleScroll}
-          >
+          {/* Body */}
+          <div className="flex-1 overflow-y-auto px-4 py-2" onScroll={handleScroll}>
             <input
               type="text"
               placeholder="Search song..."
@@ -190,6 +291,7 @@ export default function MobileLayout({
               onChange={(e) => setSearch(e.target.value)}
               className="w-full p-3 border rounded mb-4"
             />
+
             <div className="flex flex-col space-y-2">
               {searchedSongs.map((song) => (
                 <button
@@ -197,15 +299,11 @@ export default function MobileLayout({
                   className="p-3 border rounded text-left hover:bg-bgColor hover:text-white grid grid-cols-10 bg-white"
                   onClick={() => openSong(song)}
                 >
-                <span className="col-span-9">
-                  {song["Title*"]}
-                </span>
-
-                  {/* FAVORITE ICON */}
+                  <span className="col-span-9">{song["Title*"]}</span>
                   <span
                     className="col-span-1 cursor-pointer"
                     onClick={(e) => {
-                      e.stopPropagation(); // prevents selecting song
+                      e.stopPropagation();
                       toggleFavorite(song);
                     }}
                   >
@@ -214,41 +312,31 @@ export default function MobileLayout({
                 </button>
               ))}
             </div>
+            <Footer />
           </div>
 
-          {/* ---------------- Bottom Tabs ---------------- */}
-          <div
-            className={`fixed bottom-0 left-0 w-full text-white border-t transition-transform duration-300 
-            ${showBottomTabs ? "translate-y-0" : "translate-y-full"}`}
-          >
+          {/* Bottom Tabs */}
+          <div className={`fixed bottom-0 left-0 w-full text-white border-t transition-transform duration-300 
+            ${showBottomTabs ? "translate-y-0" : "translate-y-full"}`}>
+
+            {/* navigation  */}
             <div className="flex">
-              <button
-                className="flex-1 text-center py-2 bg-orange-500/80 rounded-tr-lg hover:bg-orange-300"
-                onClick={() => setOverlay("categories")}
-              >
+              <button onClick={() => navigate("/categories")} className="flex-1 py-2 bg-orange-500/80">
                 Categories
               </button>
 
-              <button
-                className="flex-1 text-center py-2 bg-orange-500/80 rounded-t-lg hover:bg-orange-300"
-                onClick={() => setOverlay("favorites")}
-              >
+              <button onClick={() => navigate("/favorites")} className="flex-1 py-2 bg-orange-500/80">
                 Favorites
               </button>
 
-              <button
-                className="flex-1 text-center py-2 bg-orange-500/80 rounded-tl-lg hover:bg-orange-300"
-                onClick={() => setOverlay("updates")}
-              >
+              <button onClick={() => navigate("/updates")} className="flex-1 py-2 bg-orange-500/80">
                 Updates
               </button>
             </div>
           </div>
-
         </>
       )}
 
-      {/* ---------------- Overlays ---------------- */}
       {renderOverlay()}
     </div>
   );

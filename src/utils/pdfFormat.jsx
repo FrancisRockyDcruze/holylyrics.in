@@ -11,17 +11,17 @@ export function pdfFormats(
     let AllTitle_Arr = []; 
     let Title_Lyrics_Arr = [];
     let MkCntrStop = line_Cntr;
-    let fixed_Cntr = line_Cntr;
+    let fixed_Cntr = line_Cntr +1;
     let col_marker = 0;
 
     let Mkcounter = 0;
     let globalKey = 0;
 
-    console.log(isMobilePreview);
+    // console.log(isMobilePreview);
     
-    const titleClassfirstline = isMobilePreview ? "font-bold pb-2 text-[16px] underline" : "font-bold py-3 text-lg underline";
-    const titleClass = isMobilePreview ? "font-bold py-2 pt-4 text-[16px] underline" : "font-bold py-3 text-lg underline";
-    const lineClass = isMobilePreview ? "text-[14px]" : "text-sm";
+    const titleClassfirstline = isMobilePreview ? "font-bold pb-2 text-[14px] underline" : "font-bold pb-3 text-lg underline";
+    const titleClass = isMobilePreview ?  "font-bold py-2 pt-3 text-[14px] underline" : "font-bold py-3 text-lg underline";
+    const lineClass = isMobilePreview ? "text-[12px]" : "text-sm";
 // const lineClass = isMobilePreview ? "text-sm" : "text-sm";
     if(songs[0] != undefined) 
     {
@@ -38,7 +38,8 @@ export function pdfFormats(
            {
                Title_Lyrics_Arr.push(<div key={`${globalKey++}`} className={titleClassfirstline}>{titleStr}</div>);
                lines.forEach((line,idx) => {
-                    Title_Lyrics_Arr.push(<div key={`${globalKey++}-title-${titleStr}-line-${idx}`} className={lineClass}>{line}</div>);
+                    const content = line.trim() === "" ? "\u00A0" : line;
+                    Title_Lyrics_Arr.push(<div key={`${globalKey++}-title-${titleStr}-line-${idx}`} className={lineClass}>{content}</div>);
                     
                 });
            }
@@ -46,14 +47,16 @@ export function pdfFormats(
             {
                 Title_Lyrics_Arr.push(<div key={`${globalKey++}`} className={titleClass}>{titleStr}</div>);
                 lines.forEach((line,idx) => {
-                     Title_Lyrics_Arr.push(<div key={`${globalKey++}-title-${titleStr}-line-${idx}`} className={lineClass}>{line}</div>);
+                     const content = line.trim() === "" ? "\u00A0" : line;
+                     Title_Lyrics_Arr.push(<div key={`${globalKey++}-title-${titleStr}-line-${idx}`} className={lineClass}>{content}</div>);
                      
                  });
             }
-            firstLine++;
+            
 
            fullLyrics_Arr.push(...lines); // add all lines
            AllTitle_Arr.push(titleStr);
+           firstLine++;
         });
 
         // console.log(Title_Lyrics_Arr);
@@ -72,6 +75,8 @@ export function pdfFormats(
                     leftCol_Arr[col_marker].push(Title_Lyrics_Arr[i]);
                 }
 
+                // console.log(leftCol_Arr);
+
                 Mkcounter = MkCntrStop + 1;
                 MkCntrStop = MkCntrStop + fixed_Cntr;
 
@@ -83,6 +88,8 @@ export function pdfFormats(
                     
                     rightCol_Arr[col_marker].push(Title_Lyrics_Arr[i]);
                 }
+
+                // console.log(rightCol_Arr);
 
                 Mkcounter = MkCntrStop + 1;
                 MkCntrStop = MkCntrStop + line_Cntr;

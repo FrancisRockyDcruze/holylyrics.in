@@ -21,12 +21,13 @@ function App() {
     <Router>
       {!isMobile && <Navbar />} {/* only desktop */}
       <Routes>
-        <Route path="/" element={<Landing />} />
+        <Route path="/*" element={<Landing />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/uploadSong" element={<UploadSong />} />
       </Routes>
-      <Footer />
+      {!isMobile && <Footer />} {/* only desktop */}
     </Router>
+    
   );
 }
 

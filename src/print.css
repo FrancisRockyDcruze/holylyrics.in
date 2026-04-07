@@ -1,0 +1,19 @@
+@media print {
+    #printPdf, #printPdf * {
+        visibility: visible;
+    }
+   
+
+    #printpdf {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    } 
+
+    .page {
+      page-break-after: always;
+      margin-top: 10mm;
+      margin-bottom: 5mm;
+    }
+}
