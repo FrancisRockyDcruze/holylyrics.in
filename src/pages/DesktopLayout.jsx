@@ -212,13 +212,13 @@ export default function Landing() {
             />
             {search && (
               <button
-  onClick={() => setSearch("")}
-  className="absolute right-5 top-1/2 -translate-y-1/2 
-             flex items-center justify-center 
-             rounded px-2 bg-gray-200 hover:bg-gray-300 text-sm"
->
-  clear
-</button>
+                onClick={() => setSearch("")}
+                className="absolute right-5 top-1/2 -translate-y-1/2 
+                          flex items-center justify-center 
+                          rounded px-2 bg-gray-200 hover:bg-gray-300 text-sm"
+              >
+                clear
+              </button>
             )}
 
             {search.length >= 3 && (
