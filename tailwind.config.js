@@ -8,7 +8,7 @@ export default {
       colors: {
         txtColor: "#ffffff",   // default blue
         bgColor: "#f59e0b", // orange
-        // accent: "#10b981",    // green
+        bglightColor:"#ffedd5"   //light color
       }
     },
   },

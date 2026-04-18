@@ -116,10 +116,10 @@ export default function Landing() {
 
   return (
     <div className="h-screen grid grid-rows-[auto_1fr_auto]">
-      <main className="grid grid-cols-10 px-1 py-2 bg-orange-100 h-full min-h-0">
+      <main className="grid grid-cols-10 px-1 py-2 bg-bglightColor h-full min-h-0">
 
         {/* LEFT COLUMN */}
-        <div className="col-span-2 grid grid-rows-[auto_1fr_auto] min-h-0 bg-orange-100">
+        <div className="col-span-2 grid grid-rows-[auto_1fr_auto] min-h-0">
 
           {/* Language / Category Header */}
           <div className="w-full grid grid-cols-1 gap-1 bg-white">
@@ -210,6 +210,17 @@ export default function Landing() {
               onChange={(e) => setSearch(e.target.value)}
               className="w-full text-center py-3"
             />
+            {search && (
+              <button
+  onClick={() => setSearch("")}
+  className="absolute right-5 top-1/2 -translate-y-1/2 
+             flex items-center justify-center 
+             rounded px-2 bg-gray-200 hover:bg-gray-300 text-sm"
+>
+  clear
+</button>
+            )}
+
             {search.length >= 3 && (
               <div className="absolute top-full left-0 w-full bg-gray-100 border max-h-[200px] overflow-y-auto mt-1 z-50 rounded shadow">
                 {filteredSearchSongs.map((song, i) => (

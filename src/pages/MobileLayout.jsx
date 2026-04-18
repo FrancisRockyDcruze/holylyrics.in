@@ -81,8 +81,8 @@ export default function MobileLayout({
     if (isSong) {
       return (
         <div className="fixed inset-0 bg-white z-50 flex flex-col">
-          <div className="p-4 flex justify-between items-center border-b">
-            <button onClick={goBack} className="text-lg">⬅ Back</button>
+          <div className="p-4 flex justify-between items-center border-b bg-bgColor">
+            <button onClick={goBack} className="text-sm border rounded px-3 py-1 bg-bglightColor">Back</button>
             <h2 className="text-lg font-bold mr-8 text-center">{selectedSong?.["Title*"]}</h2>
             <span
               className="col-span-1 cursor-pointer text-xl"
@@ -117,7 +117,7 @@ export default function MobileLayout({
                         handleTagClick(tag); // populate categorySongs & selectedCategory
 
                     navigate("/category")}}
-                  className="bg-orange-500 text-white px-2 py-1 rounded text-sm font-bold cursor-pointer select-none"
+                  className="bg-bgColor text-white px-2 py-1 rounded text-sm font-bold cursor-pointer select-none"
                 >
                   🏷️ {tag}
                 </div>
@@ -131,10 +131,10 @@ export default function MobileLayout({
     if (isCategories) {
       return (
         <div className="fixed inset-0 bg-white z-50 flex flex-col">
-          <div className="p-4 flex justify-between items-center border-b">
-            <button onClick={goBack} className="text-sm border rounded px-3 py-1">⬅ Back</button>
+          <div className="p-4 flex justify-between items-center border-b bg-bgColor">
+            <button onClick={goBack} className="text-sm border rounded px-3 py-1 bg-bglightColor">Back</button>
             <h2 className="text-lg font-bold mr-3">Categories</h2>
-            <div className="text-3xl text-bgColor border rounded px-3 py-0" onClick={() => navigate("/")}>🏠︎</div>
+            <div className="text-xl text-bgColor border rounded px-3 py-0 bg-bglightColor" onClick={() => navigate("/")}>🏠︎</div>
           </div>
 
           <div className="p-4 flex flex-col space-y-2 bg-bgColor mb-3 overflow-y-auto flex-1">
@@ -171,10 +171,10 @@ export default function MobileLayout({
       return (
         <div>
           <div className="fixed inset-0 bg-white z-50 flex flex-col p-2">
-            <div className="p-4 flex justify-between items-center border-b">
-              <button onClick={goBack} className="text-lg border rounded px-3 py-1">⬅ Back</button>
+            <div className="p-4 flex justify-between items-center border-b bg-bgColor">
+              <button onClick={goBack} className="text-lg border rounded px-3 py-1 bg-bglightColor">Back</button>
               <h2 className="text-lg font-bold">Updates</h2>
-              <div className="text-3xl text-bgColor border rounded px-3 py-0" onClick={() => navigate("/")}>🏠︎</div>
+              <div className="text-2xl text-bgColor border rounded px-3 py-0 bg-bglightColor" onClick={() => navigate("/")}>🏠︎</div>
             </div>
 
             <div className="p-1 flex flex-col space-y-2 bg-bgColor">
@@ -192,14 +192,13 @@ export default function MobileLayout({
     if (isUpload) {
       return (
         <div className="fixed inset-0 bg-white z-50 flex flex-col">
-          <div className="flex justify-between items-center p-4 border-b bg-orange-100">
-            <button onClick={goBack} className="px-3 py-1 border rounded">
-              ⬅ Back
+          <div className="flex justify-between items-center p-4 border-b bg-bgColor">
+            <button onClick={goBack} className="px-3 py-1 border rounded bg-bglightColor">
+              Back
             </button>
-
             <h1 className="text-xl font-bold">Holy Lyrical</h1>
-
-            <div className="w-[70px]"></div>
+            <h2 className="text-2xl text-bgColor border rounded px-3 py-0 bg-bglightColor"
+            onClick={() => navigate("/")}>🏠︎</h2>
           </div>
 
           <div className="flex-1 overflow-y-auto p-2">
@@ -213,16 +212,15 @@ export default function MobileLayout({
     if (isCategoryOverlay) {
       return (
         <div className="fixed inset-0 bg-white z-50 flex flex-col bg-bgColor">
-          <div className="p-4 flex justify-between items-center border-b bg-orange-4
-          00">
+          <div className="p-4 flex justify-between items-center border-b bg-bgColor">
             <button
               onClick={goBack}
-              className="text-sm border rounded px-3 py-1"
+              className="text-sm border rounded px-3 py-1 bg-bglightColor"
             >
-              ⬅ Back
+              Back
             </button>
             <h2 className="text-2xl font-bold text-center mr-3 underline">{selectedCategory}</h2>
-            <h2 className="text-3xl text-bgColor border rounded px-3 py-0"
+            <h2 className="text-2xl text-bgColor border rounded px-3 py-0 bg-bglightColor"
             onClick={() => navigate("/")}>🏠︎</h2>
           </div>
           {/* {console.log(categorySongs)} */}
@@ -233,7 +231,7 @@ export default function MobileLayout({
               categorySongs.map((song) => (
                 <button
                   key={song.id}
-                  className="p-3 border rounded hover:bg-orange-100 cursor-pointer bg-white"
+                  className="p-3 border rounded hover:bg-bglightColor cursor-pointer bg-white"
                   onClick={() => openSong(song)} // optional: open song
                 >
                   {song["Title*"]}
@@ -262,10 +260,10 @@ export default function MobileLayout({
       {!isFavorites && (
         <>
           {/* Header */}
-          <div className="flex justify-between items-center p-4 border-b bg-orange-100">
-            <h1 className="text-xl font-bold">Holy Lyrical</h1>
-            <button onClick={() => navigate("/upload")} className="px-3 py-1 border rounded">
-              ⬆ Upload
+          <div className="flex justify-between items-center p-4 border-b bg-bgColor">
+            <h1 className="text-xl font-bold ml-2">Holy Lyrical</h1>
+            <button onClick={() => navigate("/upload")} className="px-3 py-1 border rounded bg-bglightColor">
+              Upload
             </button>
           </div>
 
@@ -283,7 +281,8 @@ export default function MobileLayout({
           </div>
 
           {/* Body */}
-          <div className="flex-1 overflow-y-auto px-4 py-2" onScroll={handleScroll}>
+          <div className=" flex-1 overflow-y-auto px-4 py-2" onScroll={handleScroll}>
+            <div className="relative">
             <input
               type="text"
               placeholder="Search song..."
@@ -291,6 +290,17 @@ export default function MobileLayout({
               onChange={(e) => setSearch(e.target.value)}
               className="w-full p-3 border rounded mb-4"
             />
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="absolute right-3 top-6 -translate-y-1/2 
+                          flex items-center justify-center 
+                          rounded px-2 bg-gray-200 hover:bg-gray-300 text-sm"
+              >
+                clear
+              </button>
+            )}
+            </div>
 
             <div className="flex flex-col space-y-2">
               {searchedSongs.map((song) => (
@@ -321,15 +331,15 @@ export default function MobileLayout({
 
             {/* navigation  */}
             <div className="flex">
-              <button onClick={() => navigate("/categories")} className="flex-1 py-2 bg-orange-500/80">
+              <button onClick={() => navigate("/categories")} className="flex-1 py-2 bg-bgColor/95">
                 Categories
               </button>
 
-              <button onClick={() => navigate("/favorites")} className="flex-1 py-2 bg-orange-500/80">
+              <button onClick={() => navigate("/favorites")} className="flex-1 py-2 bg-bgColor/95">
                 Favorites
               </button>
 
-              <button onClick={() => navigate("/updates")} className="flex-1 py-2 bg-orange-500/80">
+              <button onClick={() => navigate("/updates")} className="flex-1 py-2 bg-bgColor/95">
                 Updates
               </button>
             </div>

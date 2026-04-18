@@ -202,7 +202,7 @@ export default function UploadSong(){
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-bgColor text-white py-3 rounded hover:bg-orange-200 transition"
+          className="w-full bg-bgColor text-white py-3 rounded hover:bg-bglightColor transition"
         >
           Upload Song
         </button>

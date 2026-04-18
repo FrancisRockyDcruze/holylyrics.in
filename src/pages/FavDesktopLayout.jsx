@@ -149,7 +149,7 @@ export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFa
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             className={`flex items-center justify-between p-2 border rounded bg-white ${
-                            snapshot.isDragging ? "bg-orange-200" : ""
+                            snapshot.isDragging ? "bg-bglightColor" : ""
                             }`}
                         >
                             <div className="flex items-center gap-2">
@@ -198,7 +198,7 @@ export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFa
                             </div>
                             <div className="text-base py-2" style={{"height" : "950px"}}>
                                 <div className="print flex gap-2 pb-4" style={{ }}>
-                                    <div className="left border bg-orange-100 text-center py-2 text-xs" style={{"Height" : "900px", "width": "355px", whiteSpace: "pre-line"}}>
+                                    <div className="left border bg-bglightColor text-center py-2 text-xs" style={{"Height" : "900px", "width": "355px", whiteSpace: "pre-line"}}>
                                         {leftCol_Arr[i]}
                                     </div>
                                     <div className="right border bg-gray-100 text-center py-2 text-xs" style={{"Height" : "900px", "width": "355px",whiteSpace: "pre-line"}}>
@@ -215,7 +215,7 @@ export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFa
                             {/* Content */}
                         <div className="text-base py-2" style={{"height" : "950px"}}>
                             <div className="print flex gap-2 pb-4" style={{ }}>
-                                <div className="left border bg-orange-100 text-center py-3 text-xs" style={{"Height" : "900px", "width": "355px", whiteSpace: "pre-line"}}>
+                                <div className="left border bg-bglightColor text-center py-3 text-xs" style={{"Height" : "900px", "width": "355px", whiteSpace: "pre-line"}}>
                                     {leftCol_Arr[i]}
                                 </div> 
                                 <div className="right border bg-gray-100 text-center py-3 text-xs" style={{"Height" : "900px", "width": "355px",whiteSpace: "pre-line"}}>
@@ -247,7 +247,7 @@ export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFa
                 key={i}
                 className={`p-1 border rounded w-full text-xs ${
                   headerText === opt
-                    ? "bg-orange-200"
+                    ? "bg-bglightColor"
                     : "bg-white"
                 }`}
                 onClick={() => setHeaderText(opt)}
@@ -272,7 +272,7 @@ export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFa
                     Print / Save PDF
                 </button>
 
-                <div className="bg-orange-200 my-2">
+                <div className="bg-bglightColor my-2">
                 <label className="text-sm font-bold flex items-center justify-center px-1">Adjust Lines</label>
                     <input
                         type="number"

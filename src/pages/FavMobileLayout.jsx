@@ -96,18 +96,18 @@ export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMo
         )}
 
       {/* Header */}
-      <div className="flex justify-between items-center p-4 border-b bg-orange-100">
+      <div className="flex justify-between items-center p-4 border-b bg-bgColor">
          <button
             // onClick={closeFav}
             onClick={() => navigate("/")}
-            className="px-3 py-1 border rounded"
+            className="px-2 py-1 border rounded bg-bglightColor"
             
         >Home
         </button>
         <h2 className="text-xl font-bold">Holy Lyrical</h2>
         <button
           onClick={() => setReorderMode(!reorderMode)}
-          className="px-3 py-1 border rounded"
+          className="px-1 py-1 border rounded bg-bglightColor"
         >
           {reorderMode ? "Done" : "Reorder"}
         </button>
@@ -190,7 +190,7 @@ export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMo
         <>
         <div className="fixed inset-0 bg-white z-50 flex flex-col">
           {/* Header */}
-          <div className="flex justify-between items-center p-4 border-b bg-orange-100">
+          <div className="flex justify-between items-center p-4 border-b bg-bglightColor">
             <button
               onClick={() => setPreviewOpen(false)}
               className="px-3 py-1 border rounded"
@@ -232,7 +232,7 @@ export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMo
                   {/* PDF Content */}
                   <div className="flex gap-2">
                     <div
-                      className="left border bg-orange-100 text-center py-2 text-xs flex-1 whitespace-pre-line"
+                      className="left border bg-bglightColor text-center py-2 text-xs flex-1 whitespace-pre-line"
             
                     >
                       {leftCol_Arr[i]}
@@ -261,7 +261,7 @@ export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMo
               <button
                 key={idx}
                 className={`p-1 border rounded mb-1 w-full text-xs ${
-                  headerText === opt ? "bg-orange-200" : "bg-white"
+                  headerText === opt ? "bg-bglightColor" : "bg-white"
                   }`}
                 onClick={() => setHeaderText(opt)}
               >
@@ -284,7 +284,7 @@ export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMo
           {/* <div className="fixed bottom-4 left-0 w-full flex justify-center z-50">
             
           </div> */}
-          <div className="bg-orange-200 my-2">
+          <div className="bg-bglightColor my-2">
             <label className="text-sm font-bold flex items-center justify-center px-1">Adjust Lines</label>
                 <input
                     type="number"
