@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { getSongs } from "../services/api";
 import { addSongToSheet } from "../services/addSongApi";
-import {getTextfromImage } from "../utils/ImagetoText";
+import { getTextfromImage } from "../utils/ImagetoText";
 
 export default function UploadSong(){
 
@@ -50,6 +50,10 @@ export default function UploadSong(){
     });
 
   const [status, setStatus] = useState(""); // For showing success/error
+  const [showMenu, setShowMenu] = useState(false);
+  
+  const userId = localStorage.getItem("userId");
+    // console.log(userId);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,10 +71,11 @@ export default function UploadSong(){
 
     const finalSong = {
         id: id,
+        userId: userId,
         ...addsong,
     };
 
-    console.log(finalSong);
+    // console.log(finalSong);
 
     setStatus("Saving...");
 
@@ -89,14 +94,23 @@ export default function UploadSong(){
   };
 
   useEffect(() => {
+    // console.log(localStorage)
+    const token = localStorage.getItem("admin_token");
+
+    if (!token) {
+      navigate("/");
+    }
+  }, []);
+
+  useEffect(() => {
     loadSongs();
   }, [])
 
   return (
     <div className="max-w-lg mx-auto p-4 sm:p-6 bg-white shadow rounded mt-4 sm:mt-10">
         <div className="grid grid-cols-12 gap-2 p-2">
-            <h2 className="text-lg sm:text-2xl font-bold mb-6 text-center col-span-10 ml-10 sm:ml-20">Upload New Song</h2>
-            <h1 className="text-2xl text-lg sm:text-2xl font-bold mb-6 text-end col-span-2">#{id}</h1>
+          <h2 className="text-lg sm:text-2xl font-bold mb-6 text-center col-span-10 ml-10 sm:ml-20">Upload New Song</h2>
+          <h1 className="text-2xl text-lg sm:text-2xl font-bold mb-6 text-end col-span-2">#{id}</h1>
         </div>
       <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
         {/* Title */}
@@ -121,6 +135,7 @@ export default function UploadSong(){
 
         {/* lyrics */}
         <textarea
+          rows={5}
           type="text"
           placeholder="Enter Lyrics"
           value={addsong.lyrics}

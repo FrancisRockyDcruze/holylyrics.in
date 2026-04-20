@@ -104,7 +104,7 @@ export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMo
             
         >Home
         </button>
-        <h2 className="text-xl font-bold">Holy Lyrical</h2>
+        <h2 className="text-2xl text-bglightColor font-bold">Holy Lyrical</h2>
         <button
           onClick={() => setReorderMode(!reorderMode)}
           className="px-1 py-1 border rounded bg-bglightColor"
@@ -120,7 +120,7 @@ export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMo
 
       <div className="bg-bgColor">  
         {/* Favorite List */}
-        <div className="flex-1 overflow-auto px-4 mt-3">
+        <div className="flex-1 overflow-auto px-4 mt-3 min-h-screen">
           <DragDropContext onDragEnd={handleDragEnd}>
             <Droppable droppableId="favMobile">
               {(provided) => (
@@ -171,8 +171,9 @@ export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMo
               )}
             </Droppable>
           </DragDropContext>
-        <Footer/>      
+            
         </div>
+        <Footer/>  
 
         {/* Bottom Fixed Preview Button */}
         <div className="fixed bottom-0 left-0 w-full flex justify-center z-50">

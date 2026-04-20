@@ -10,6 +10,8 @@ import {
 } from "../utils/songUtils";
 import { saveFavoriteToSheet } from "../services/fav_api";
 import { useNavigate } from "react-router-dom";
+import { checkAccess } from "../services/checkAdminAccess";
+// import LoginCard from "../components/Admin_login_Card";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -23,6 +25,7 @@ export default function Landing() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categorySongs, setCategorySongs] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
   // Filtered & paginated songs
   const filteredSongs = filterSongsByLanguage(songs, language);
@@ -288,6 +291,8 @@ export default function Landing() {
           </div>
         </div>
       </main>
+    
+      {/* {showModal && (<LoginCard />)} */}
     </div>
   );
 }

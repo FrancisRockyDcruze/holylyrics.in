@@ -8,6 +8,11 @@ import { useParams } from "react-router-dom";
 import { getCategorySongs } from "../utils/songUtils";
 import { getAllTags } from "../utils/songUtils";
 import Footer from "../components/Footer";
+import logo from "../assets/images/logo.jpeg"
+import { checkAccess } from "../services/checkAdminAccess";
+import LoginCard from "../components/Admin_login_Card";
+import { getInitials } from "../services/checkAdminAccess";
+import Logout from "../components/Admin_logout";
 
 export default function MobileLayout({
   songs,
@@ -26,7 +31,7 @@ export default function MobileLayout({
   const [language, setLanguage] = useState("English");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categorySongs, setCategorySongs] = useState([]);
-  // const [allTags, setAllTags] = useState([]);
+  const [showMenu, setShowMenu] = useState(false);
 
   const handleScroll = (e) => {
     const scrollTop = e.target.scrollTop;
@@ -57,22 +62,39 @@ export default function MobileLayout({
   .map(tag => tag.trim())
 
   const handleTagClick = (tag) => {
-  const catSongs = getCategorySongs(songs, tag); // true = return all songs
-  // console.log(catSongs);
+    const catSongs = getCategorySongs(songs, tag); // true = return all songs
+    // console.log(catSongs);
 
-  setSelectedCategory(tag);
-  setCategorySongs(catSongs);
-};
+    setSelectedCategory(tag);
+    setCategorySongs(catSongs);
+  };
 
   // detect route
   const path = location.pathname;
-
   const isSong = path.startsWith("/song");
   const isCategories = path === "/categories";
   const isFavorites = path === "/favorites";
   const isUpdates = path === "/updates";
   const isUpload = path === "/upload";
   const isCategoryOverlay = path === "/category";
+
+  //admin access when click upload button
+  const [showModal, setShowModal] = useState(false);
+  const [userId, setUserId] = useState("");
+  const [phone, setPhone] = useState("");
+  const menuRef = useRef(null);
+
+  //logout Admin
+  const handleLogout = () =>{
+    localStorage.clear()
+    setShowMenu(false);
+    navigate("/")
+    localStorage.getItem()
+  }
+
+  useEffect(() => {
+    setShowMenu(false);
+  }, [location.pathname]);
 
   // ---------------- Overlays ----------------
   const renderOverlay = () => {
@@ -83,7 +105,7 @@ export default function MobileLayout({
         <div className="fixed inset-0 bg-white z-50 flex flex-col">
           <div className="p-4 flex justify-between items-center border-b bg-bgColor">
             <button onClick={goBack} className="text-sm border rounded px-3 py-1 bg-bglightColor">Back</button>
-            <h2 className="text-lg font-bold mr-8 text-center">{selectedSong?.["Title*"]}</h2>
+            <h2 className="text-xl text-bglightColor font-bold mr-8 text-center">{selectedSong?.["Title*"]}</h2>
             <span
               className="col-span-1 cursor-pointer text-xl"
               onClick={(e) => {
@@ -103,7 +125,7 @@ export default function MobileLayout({
 
           <div className="p-4 overflow-y-auto flex-1">
             <div
-              className="whitespace-pre-wrap text-center"
+              className="whitespace-pre-wrap text-center min-h-screen"
               dangerouslySetInnerHTML={{ __html: selectedSong?.["lyrics*"] }}
             />
              <Footer/>
@@ -133,7 +155,7 @@ export default function MobileLayout({
         <div className="fixed inset-0 bg-white z-50 flex flex-col">
           <div className="p-4 flex justify-between items-center border-b bg-bgColor">
             <button onClick={goBack} className="text-sm border rounded px-3 py-1 bg-bglightColor">Back</button>
-            <h2 className="text-lg font-bold mr-3">Categories</h2>
+            <h2 className="text-2xl text-bglightColor font-bold mr-3">Categories</h2>
             <div className="text-xl text-bgColor border rounded px-3 py-0 bg-bglightColor" onClick={() => navigate("/")}>🏠︎</div>
           </div>
 
@@ -173,16 +195,18 @@ export default function MobileLayout({
           <div className="fixed inset-0 bg-white z-50 flex flex-col p-2">
             <div className="p-4 flex justify-between items-center border-b bg-bgColor">
               <button onClick={goBack} className="text-lg border rounded px-3 py-1 bg-bglightColor">Back</button>
-              <h2 className="text-lg font-bold">Updates</h2>
+              <h2 className="text-2xl font-bold text-bglightColor">Updates</h2>
               <div className="text-2xl text-bgColor border rounded px-3 py-0 bg-bglightColor" onClick={() => navigate("/")}>🏠︎</div>
             </div>
 
-            <div className="p-1 flex flex-col space-y-2 bg-bgColor">
-              <div className="bg-bgColor">
-                <p className="p-2 m-2 bg-white rounded">Jesus is Risen</p>
-                <p className="p-2 m-2 bg-white rounded">New songs added!</p>
-              </div>
-              <Footer/>
+            <div className="overflow-y-auto py-2 flex-1 bg-bgColor">
+                <div className="min-h-screen">
+                  <p className="p-2 m-2 bg-white rounded">Last Feast Easter </p>
+                  <p className="p-2 m-2 bg-white rounded">New songs added!</p>
+                  <p className="p-2 m-2 bg-white rounded">Latest updates will be shown here...</p>
+                </div>
+                
+                <Footer />
             </div>
           </div>
         </div>
@@ -193,14 +217,17 @@ export default function MobileLayout({
       return (
         <div className="fixed inset-0 bg-white z-50 flex flex-col">
           <div className="flex justify-between items-center p-4 border-b bg-bgColor">
-            <button onClick={goBack} className="px-3 py-1 border rounded bg-bglightColor">
+            <button 
+              onClick={goBack} 
+              className="px-3 py-1 border text-sm rounded bg-bglightColor"
+            >
               Back
             </button>
-            <h1 className="text-xl font-bold">Holy Lyrical</h1>
-            <h2 className="text-2xl text-bgColor border rounded px-3 py-0 bg-bglightColor"
-            onClick={() => navigate("/")}>🏠︎</h2>
-          </div>
 
+            <h1 className="text-xl text-bglightColor font-bold">Holy Lyrical</h1>
+            <Logout />
+          </div>
+          
           <div className="flex-1 overflow-y-auto p-2">
             <UploadSong />
           </div>
@@ -219,7 +246,7 @@ export default function MobileLayout({
             >
               Back
             </button>
-            <h2 className="text-2xl font-bold text-center mr-3 underline">{selectedCategory}</h2>
+            <h2 className="text-2xl text-bglightColor font-bold text-center mr-3 underline">{selectedCategory}</h2>
             <h2 className="text-2xl text-bgColor border rounded px-3 py-0 bg-bglightColor"
             onClick={() => navigate("/")}>🏠︎</h2>
           </div>
@@ -261,8 +288,21 @@ export default function MobileLayout({
         <>
           {/* Header */}
           <div className="flex justify-between items-center p-4 border-b bg-bgColor">
-            <h1 className="text-xl font-bold ml-2">Holy Lyrical</h1>
-            <button onClick={() => navigate("/upload")} className="px-3 py-1 border rounded bg-bglightColor">
+            {/* <img src= {logo} alt="logo" className="w-12 h-12 bg-bgColor"/> */}
+            <h2 className="text-4xl font-bold text-white">☩</h2>
+            <h1 className="text-2xl font-bold ml-12 text-bglightColor">Holy Lyrical</h1>
+            <button 
+                onClick={() => {
+                const token = localStorage.getItem("admin_token");
+
+                if (token) {
+                  setShowMenu(false);
+                  navigate("/upload");
+                } else {
+                  setShowModal(true);
+                }
+              }}
+              className="px-3 py-1 border rounded bg-bglightColor">
               Upload
             </button>
           </div>
@@ -345,6 +385,16 @@ export default function MobileLayout({
             </div>
           </div>
         </>
+      )}
+
+      {showModal && (
+        <LoginCard 
+          onClose={() => setShowModal(false)}
+          onSuccess={() => {
+            setShowModal(false);
+            navigate("/upload");
+          }}
+        />
       )}
 
       {renderOverlay()}
