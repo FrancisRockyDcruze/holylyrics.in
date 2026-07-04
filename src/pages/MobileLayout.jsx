@@ -36,6 +36,13 @@ export default function MobileLayout({
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showMassMenu, setShowMassMenu] = useState(false);
   const [showThemeMenu, setShowThemeMenu] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(!!localStorage.getItem("admin_token"));
+
+  // useState(Boolean(localStorage.getItem("admin_token"))
+  const handleLoginSuccess = () => {
+    // setIsAdmin(true);
+    setIsAdmin(!!localStorage.getItem("admin_token"));
+  };
 
   const handleScroll = (e) => {
     const scrollTop = e.target.scrollTop;
@@ -50,7 +57,6 @@ export default function MobileLayout({
     lastScroll.current = scrollTop;
   };
 
-  
   const filteredSongs = filterSongsByLanguage(songs, language);
   const searchedSongs = filteredSongs.filter((song) =>
     song.Searchkey.toLowerCase().includes(search.toLowerCase())
@@ -116,10 +122,11 @@ export default function MobileLayout({
     if (isSong) {
       return (
         <div className="fixed inset-0 bg-white z-50 flex flex-col">
-          <div className="p-4 flex justify-between items-center border-b bg-bgColor">
+          <div className={`grid ${isAdmin ? "grid-cols-[15%_75%_10%]" : "grid-cols-[15%_85%]"} items-center p-4 border-b bg-bgColor`}>
             <button onClick={goBack} className="text-txtColor text-sm border rounded px-3 py-1 bg-bglightColor">Back</button>
             <h2 className="text-xl text-bglightColor font-bold mr-8 text-center">{selectedSong?.["Title*"]}</h2>
-            <span
+            {isAdmin && (
+              <span
               className="col-span-1 cursor-pointer text-xl"
               onClick={(e) => {
                 // e.stopPropagation();
@@ -134,6 +141,7 @@ export default function MobileLayout({
             >
               {selectedSong?.["Fav Added"] === 1 ? "❤️" : "🤍"}
             </span>
+            )}
           </div>
 
           <div className="p-4 overflow-y-auto flex-1">
@@ -231,14 +239,14 @@ export default function MobileLayout({
         <div className="fixed inset-0 bg-white z-50 flex flex-col">
           <div className="flex justify-between items-center p-4 border-b bg-bgColor">
             <button 
-              onClick={goBack} 
+              onClick= {() => {goBack(); handleLoginSuccess();}}
               className="px-3 py-1 border text-sm rounded bg-bglightColor text-txtColor"
             >
               Back
             </button>
 
             <h1 className="text-xl text-bglightColor font-bold">Holy Lyrical</h1>
-            <Logout />
+            <Logout setIsAdmin={setIsAdmin}/>
           </div>
           
           <div className="flex-1 overflow-y-auto p-2">
@@ -308,6 +316,7 @@ export default function MobileLayout({
                 const token = localStorage.getItem("admin_token");
 
                 if (token) {
+                  setIsAdmin(true);
                   setShowMenu(false);
                   navigate("/upload");
                 } else {
@@ -325,7 +334,7 @@ export default function MobileLayout({
               <button
                 key={lang}
                 onClick={() => setLanguage(lang)}
-                className={`px-4 py-2 border rounded ${language === lang ? "bg-bgColor text-bglightColor" : ""}`}
+                className={`px-4 py-2 border rounded ${language === lang ? "bg-bgColor" : ""}`}
               >
                 {lang} 🎶
               </button>
@@ -362,15 +371,18 @@ export default function MobileLayout({
                   onClick={() => openSong(song)}
                 >
                   <span className="col-span-9">{song["Title*"]}</span>
-                  <span
-                    className="col-span-1 cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleFavorite(song);
-                    }}
-                  >
-                    {song["Fav Added"] === 1 ? "❤️" : "🤍"}
-                  </span>
+                  
+                  {isAdmin && (
+                      <span
+                      className="col-span-1 cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFavorite(song);
+                      }}
+                    >
+                      {song["Fav Added"] === 1 ? "❤️" : "🤍"}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
@@ -380,11 +392,9 @@ export default function MobileLayout({
           {/* Bottom Tabs */}
           <div className={`fixed bottom-0 left-0 w-full text-white border-t transition-transform duration-300 
             ${showBottomTabs ? "translate-y-0" : "translate-y-full"}`}>
-
-
             {showThemeMenu && (
               <div className="relative bottom-2 z-50 flex flex-col items-center text-txtColor">
-                <div className="flex bg-bgColor rounded-tl-lg shadow-lg overflow-hidden">
+                <div className="flex rounded-tl-lg shadow-lg overflow-hidden">
                   <ThemePanel setShowThemeMenu={setShowThemeMenu}/>
                 </div>     
               </div>
@@ -402,6 +412,7 @@ export default function MobileLayout({
                     shadow-lg
                     text-txtColor
                     transition-transform duration-300 ease-in-out
+                    rounded-tl-lg
                     ${
                         showMassMenu
                           ? "translate-x-0 opacity-100"
@@ -415,11 +426,11 @@ export default function MobileLayout({
                       setShowMassMenu(false);
                       navigate("/englishmass");
                     }}
-                    className="block text-left px-2 pl-4 py-3 whitespace-nowrap hover:bg-white hover:text-bgColor"
+                    className="block text-left px-2 whitespace-nowrap"
                   >
                     English
                   </button>
-                    <span className="py-3">|</span>
+                    <span className="py-3 text-bglightColor">|</span>
 
                   <button
                     onClick={() => {
@@ -427,11 +438,11 @@ export default function MobileLayout({
                       setShowMassMenu(false);
                       navigate("/bengalimass");
                     }}
-                    className="block text-left px-2 py-3 whitespace-nowrap hover:bg-white hover:text-bgColor"
+                    className="block text-left px-2 whitespace-nowrap"
                   >
                     Bengali
                   </button>
-                     <span className="py-3">|</span>
+                     <span className="py-3 text-bglightColor">|</span>
                      
                   <button
                     onClick={() => {
@@ -439,7 +450,7 @@ export default function MobileLayout({
                       setShowMassMenu(false);
                       navigate("/hindimass");
                     }}
-                    className="block text-left px-2 py-3 whitespace-nowrap hover:bg-white hover:text-bgColor"
+                    className="block text-left px-2 py-3 whitespace-nowrap"
                   >
                     Hindi
                   </button>
@@ -447,7 +458,7 @@ export default function MobileLayout({
 
                   <div className="flex flex-col bg-bgColor rounded-tl-lg shadow-lg overflow-hidden">
                     <button
-                      className="text-left px-4 py-3"
+                      className="text-left px-4 py-3 border-b border-bglightColor"
                       onClick={() => {
                         setShowMoreMenu(false);
                         navigate("/updates");
@@ -457,7 +468,7 @@ export default function MobileLayout({
                     </button>
 
                     <button
-                      className=" text-left px-4 py-3"
+                      className=" text-left px-4 py-3 border-b border-bglightColor"
                       onClick={() => {
                       setShowMoreMenu(false)
                       setShowThemeMenu(!showThemeMenu)}}
@@ -480,7 +491,7 @@ export default function MobileLayout({
                 Categories
               </button>
 
-              <button onClick={() => navigate("/favorites")} className="flex-1 py-2 bg-bgColor/95">
+              <button onClick={() => isAdmin ? navigate("/favorites") : alert("Require Admin Access!")} className="flex-1 py-2 bg-bgColor/95">
                 Favorites
               </button>
 

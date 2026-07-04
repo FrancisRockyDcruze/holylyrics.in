@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import { useLocation } from "react-router-dom";
 
-export default function Logout(){
+export default function Logout({setIsAdmin}){
     const [showMenu, setShowMenu] = useState(false);
     const menuRef = useRef(null);
     const navigate = useNavigate();
@@ -16,7 +16,7 @@ export default function Logout(){
         localStorage.clear()
         navigate("/")
         setShowMenu(false);
-        // localStorage.getItem()
+        setIsAdmin(false);
     }
 
     useEffect(() => {

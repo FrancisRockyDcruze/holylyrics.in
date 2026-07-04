@@ -116,7 +116,7 @@ export default function ThemePanel({setShowThemeMenu}) {
     }
   
     return (
-    <div className="border rounded p-3 w-[300px]">
+    <div className="border rounded p-3 w-[300px] bg-bgColor">
         <div className="flex justify-between">
             <h2 className="p-2 text-xl font-bold text-center">
             🎨 Theme
@@ -157,9 +157,9 @@ export default function ThemePanel({setShowThemeMenu}) {
         <div>
             <div
                 onClick={() => setActiveColor("background")}
-                className={`cursor-pointer rounded m-2 ${
+                className={`cursor-pointer rounded m-2 border-black bg-bglightColor ${
                     activeColor === "background"
-                    ? "border-2 border"
+                    ? "border-2"
                     : "border"
                 }`}
                 >
@@ -168,7 +168,7 @@ export default function ThemePanel({setShowThemeMenu}) {
                 </p>
 
                 <div
-                    className="h-5 rounded mt-2"
+                    className="h-5 mt-2 border-t border-black"
                     style={{ background: colors.background }}
                 />
             </div>
@@ -179,7 +179,7 @@ export default function ThemePanel({setShowThemeMenu}) {
                         setActiveColor("text");
                     }
                 }}
-                className={`cursor-pointer rounded m-2 border ${
+                className={`cursor-pointer rounded m-2 border border-black bg-bgColor ${
                     autoContrast ? "opacity-50 cursor-not-allowed border" : `${
                     activeColor === "text"
                     ? "border-2 border"
@@ -192,7 +192,7 @@ export default function ThemePanel({setShowThemeMenu}) {
                 </p>
 
                 <div
-                    className="h-5 rounded mt-2"
+                    className="h-5 border-t border-black mt-2"
                     style={{ background: colors.text }}
                 />
             </div>
@@ -203,10 +203,10 @@ export default function ThemePanel({setShowThemeMenu}) {
                         setActiveColor("light");
                     }
                 }}
-                className={`cursor-pointer rounded m-2 ${
+                className={`cursor-pointer rounded m-2 border-black bg-txtColor ${
                     autoContrast ? "opacity-50 cursor-not-allowed border" : `${
                     activeColor === "light"
-                    ? "border-2 border"
+                    ? "border-2"
                     : "border"
                 }`}
                 }`}
@@ -216,7 +216,7 @@ export default function ThemePanel({setShowThemeMenu}) {
                 </p>
 
                 <div
-                    className="h-5 rounded mt-2"
+                    className="h-5 border-black border-t mt-2"
                     style={{ background: colors.light }}
                 />
             </div>
@@ -226,18 +226,18 @@ export default function ThemePanel({setShowThemeMenu}) {
         <div className="flex items-center justify-between mt-4 px-1">
 
             <div>
-                <h3 className="font-semibold text-lg px-3">
+                <h3 className="font-semibold text-lg px-3 text-black">
                 Auto Contrast
                 </h3>
 
-                <p className="text-sm text-bglightColor px-3">
+                <p className="text-sm text-black px-3">
                 Automatically adjusts Text & Light colors
                 </p>
             </div>
 
             <div className="flex flex-col items-center gap-3">
 
-            <div className="text-sm font-semibold">
+            <div className="text-sm font-semibold text-bgColor">
                 {autoContrast ? "ON" : "OFF"}
             </div>
 
@@ -268,7 +268,7 @@ export default function ThemePanel({setShowThemeMenu}) {
             
             <button
                 onClick={resetTheme}
-                className="w-full mt-3 border border text-txtColor py-3 rounded-lg font-bold transition"
+                className="w-full mt-3 border bg-bgColor border text-txtColor py-3 rounded-lg font-bold transition"
                 >
                 ♻ Reset Theme
             </button>
