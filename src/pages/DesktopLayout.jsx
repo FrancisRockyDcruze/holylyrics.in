@@ -12,6 +12,7 @@ import { saveFavoriteToSheet } from "../services/fav_api";
 import { useNavigate } from "react-router-dom";
 import { checkAccess } from "../services/checkAdminAccess";
 // import LoginCard from "../components/Admin_login_Card";
+import { AdminAccess } from "../services/adminAccess";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -117,6 +118,8 @@ export default function Landing() {
     .filter((song) => song.Searchkey.toLowerCase().includes(search.toLowerCase()))
     .slice(0, 20);
 
+  const isAdmin = AdminAccess();
+
   return (
     <div className="h-screen grid grid-rows-[auto_1fr_auto]">
       <main className="grid grid-cols-10 px-1 py-2 bg-bglightColor h-full min-h-0">
@@ -178,7 +181,9 @@ export default function Landing() {
                       toggleFavorite(song);
                     }}
                   >
-                    {song["Fav Added"] === 1 ? "❤️" : "🤍"}
+                    {isAdmin && (song["Fav Added"] === 1 ? "❤️" : "🤍")
+                      
+                    }
                   </span>
                 </li>
               ))}

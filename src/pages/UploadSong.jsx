@@ -2,9 +2,11 @@ import { useEffect, useState, useRef } from "react";
 import { getSongs } from "../services/api";
 import { addSongToSheet } from "../services/addSongApi";
 import { getTextfromImage } from "../utils/ImagetoText";
+import { useNavigate } from "react-router-dom";
 
 export default function UploadSong(){
 
+  const navigate = useNavigate();
   const engRef = useRef("");
   const hinRef = useRef("");
   const benRef = useRef("");

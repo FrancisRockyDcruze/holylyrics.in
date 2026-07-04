@@ -13,7 +13,8 @@ import HindiMass from "./pages/Hindi_mass";
 function App() {
   const [isMobile, setIsMobile] = useState(false);
   const savedTheme = localStorage.getItem("holyLyricsTheme");
-
+  const [isAdmin, setIsAdmin] = useState();
+  
   if (savedTheme) {
     const theme = JSON.parse(savedTheme);
 

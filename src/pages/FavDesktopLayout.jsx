@@ -1,4 +1,5 @@
 import { useEffect,useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getSongs } from "../services/api";
 import { pdfFormats } from "../utils/pdfFormat";
 import { printPDF } from "../utils/pdfGenerator";
@@ -16,7 +17,8 @@ export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFa
     const [customHeader, setCustomHeader] = useState("");
     const [loading, setLoading] = useState(false);
     const [noOfLine, setNoOfLine] = useState(36);
-
+    const navigate = useNavigate();
+    
     const loadSongs = async () => {
         try {
             setLoading(true); // start loader
@@ -67,6 +69,15 @@ export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFa
 
     useEffect(() =>{
         loadSongs();
+    }, []);
+
+    useEffect(() => {
+        // console.log(localStorage)
+        const token = localStorage.getItem("admin_token");
+
+        if (!token) {
+        navigate("/");
+        }
     }, []);
 
     let leftCol_Arr = [];

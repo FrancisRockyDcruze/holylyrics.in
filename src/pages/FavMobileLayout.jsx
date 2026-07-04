@@ -18,6 +18,15 @@ export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMo
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+      // console.log(localStorage)
+      const token = localStorage.getItem("admin_token");
+
+      if (!token) {
+      navigate("/");
+      }
+  }, []);
+  
   // Load favorites and sort by position
   useEffect(() => {
     const favSongs = songs
