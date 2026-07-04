@@ -36,4 +36,7 @@ export default defineConfig({
     })
   ],
   base: '/holylyrics.in/',
+  build: {
+    chunkSizeWarningLimit: 1000,
+  },
 })
