@@ -13,6 +13,7 @@ import { checkAccess } from "../services/checkAdminAccess";
 import LoginCard from "../components/Admin_login_Card";
 import { getInitials } from "../services/checkAdminAccess";
 import Logout from "../components/Admin_logout";
+import ThemePanel from "../components/Theme/ThemePanel";
 
 export default function MobileLayout({
   songs,
@@ -32,6 +33,9 @@ export default function MobileLayout({
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categorySongs, setCategorySongs] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [showMassMenu, setShowMassMenu] = useState(false);
+  const [showThemeMenu, setShowThemeMenu] = useState(false);
 
   const handleScroll = (e) => {
     const scrollTop = e.target.scrollTop;
@@ -39,8 +43,14 @@ export default function MobileLayout({
     if (scrollTop > lastScroll.current + 10) setShowBottomTabs(false);
     else if (scrollTop < lastScroll.current - 20 || scrollTop < 50) setShowBottomTabs(true);
 
+    // Close menus while scrolling
+    if (showMoreMenu) setShowMoreMenu(false);
+    setShowMassMenu(false);
+
     lastScroll.current = scrollTop;
   };
+
+  
   const filteredSongs = filterSongsByLanguage(songs, language);
   const searchedSongs = filteredSongs.filter((song) =>
     song.Searchkey.toLowerCase().includes(search.toLowerCase())
@@ -77,6 +87,7 @@ export default function MobileLayout({
   const isUpdates = path === "/updates";
   const isUpload = path === "/upload";
   const isCategoryOverlay = path === "/category";
+  // const bengaliMass = path == "bengalimass";
 
   //admin access when click upload button
   const [showModal, setShowModal] = useState(false);
@@ -93,8 +104,10 @@ export default function MobileLayout({
   }
 
   useEffect(() => {
-    setShowMenu(false);
+    setShowMoreMenu(false);
+    setShowMassMenu(false);
   }, [location.pathname]);
+
 
   // ---------------- Overlays ----------------
   const renderOverlay = () => {
@@ -104,7 +117,7 @@ export default function MobileLayout({
       return (
         <div className="fixed inset-0 bg-white z-50 flex flex-col">
           <div className="p-4 flex justify-between items-center border-b bg-bgColor">
-            <button onClick={goBack} className="text-sm border rounded px-3 py-1 bg-bglightColor">Back</button>
+            <button onClick={goBack} className="text-txtColor text-sm border rounded px-3 py-1 bg-bglightColor">Back</button>
             <h2 className="text-xl text-bglightColor font-bold mr-8 text-center">{selectedSong?.["Title*"]}</h2>
             <span
               className="col-span-1 cursor-pointer text-xl"
@@ -125,7 +138,7 @@ export default function MobileLayout({
 
           <div className="p-4 overflow-y-auto flex-1">
             <div
-              className="whitespace-pre-wrap text-center min-h-screen"
+              className="text-txtColor whitespace-pre-wrap text-center min-h-screen"
               dangerouslySetInnerHTML={{ __html: selectedSong?.["lyrics*"] }}
             />
              <Footer/>
@@ -139,7 +152,7 @@ export default function MobileLayout({
                         handleTagClick(tag); // populate categorySongs & selectedCategory
 
                     navigate("/category")}}
-                  className="bg-bgColor text-white px-2 py-1 rounded text-sm font-bold cursor-pointer select-none"
+                  className="bg-bgColor text-txtColor px-2 py-1 rounded text-sm font-bold cursor-pointer select-none"
                 >
                   🏷️ {tag}
                 </div>
@@ -154,7 +167,7 @@ export default function MobileLayout({
       return (
         <div className="fixed inset-0 bg-white z-50 flex flex-col">
           <div className="p-4 flex justify-between items-center border-b bg-bgColor">
-            <button onClick={goBack} className="text-sm border rounded px-3 py-1 bg-bglightColor">Back</button>
+            <button onClick={goBack} className="text-sm border rounded px-3 py-1 bg-bglightColor text-txtColor">Back</button>
             <h2 className="text-2xl text-bglightColor font-bold mr-3">Categories</h2>
             <div className="text-xl text-bgColor border rounded px-3 py-0 bg-bglightColor" onClick={() => navigate("/")}>🏠︎</div>
           </div>
@@ -166,7 +179,7 @@ export default function MobileLayout({
                   handleTagClick(cat); // populate categorySongs & selectedCategory
                   navigate("/category")}}
                 key={cat}
-                className="p-3 border rounded text-center bg-white hover:text-white"
+                className="text-txtColor p-3 border rounded text-center bg-white hover:text-white"
               >
                 🏷️ {cat}
               </button>
@@ -194,13 +207,13 @@ export default function MobileLayout({
         <div>
           <div className="fixed inset-0 bg-white z-50 flex flex-col p-2">
             <div className="p-4 flex justify-between items-center border-b bg-bgColor">
-              <button onClick={goBack} className="text-lg border rounded px-3 py-1 bg-bglightColor">Back</button>
+              <button onClick={goBack} className="text-lg border rounded px-3 py-1 bg-bglightColor text-txtColor">Back</button>
               <h2 className="text-2xl font-bold text-bglightColor">Updates</h2>
               <div className="text-2xl text-bgColor border rounded px-3 py-0 bg-bglightColor" onClick={() => navigate("/")}>🏠︎</div>
             </div>
 
             <div className="overflow-y-auto py-2 flex-1 bg-bgColor">
-                <div className="min-h-screen">
+                <div className="min-h-screen text-txtColor">
                   <p className="p-2 m-2 bg-white rounded">Last Feast Easter </p>
                   <p className="p-2 m-2 bg-white rounded">New songs added!</p>
                   <p className="p-2 m-2 bg-white rounded">Latest updates will be shown here...</p>
@@ -219,7 +232,7 @@ export default function MobileLayout({
           <div className="flex justify-between items-center p-4 border-b bg-bgColor">
             <button 
               onClick={goBack} 
-              className="px-3 py-1 border text-sm rounded bg-bglightColor"
+              className="px-3 py-1 border text-sm rounded bg-bglightColor text-txtColor"
             >
               Back
             </button>
@@ -242,7 +255,7 @@ export default function MobileLayout({
           <div className="p-4 flex justify-between items-center border-b bg-bgColor">
             <button
               onClick={goBack}
-              className="text-sm border rounded px-3 py-1 bg-bglightColor"
+              className="text-sm border rounded px-3 py-1 bg-bglightColor text-txtColor"
             >
               Back
             </button>
@@ -258,7 +271,7 @@ export default function MobileLayout({
               categorySongs.map((song) => (
                 <button
                   key={song.id}
-                  className="p-3 border rounded hover:bg-bglightColor cursor-pointer bg-white"
+                  className="p-3 border rounded hover:bg-bglightColor cursor-pointer bg-white text-txtColor"
                   onClick={() => openSong(song)} // optional: open song
                 >
                   {song["Title*"]}
@@ -288,7 +301,6 @@ export default function MobileLayout({
         <>
           {/* Header */}
           <div className="flex justify-between items-center p-4 border-b bg-bgColor">
-            {/* <img src= {logo} alt="logo" className="w-12 h-12 bg-bgColor"/> */}
             <h2 className="text-4xl font-bold text-white">☩</h2>
             <h1 className="text-2xl font-bold ml-12 text-bglightColor">Holy Lyrical</h1>
             <button 
@@ -302,18 +314,18 @@ export default function MobileLayout({
                   setShowModal(true);
                 }
               }}
-              className="px-3 py-1 border rounded bg-bglightColor">
+              className="px-3 py-1 border rounded bg-bglightColor text-txtColor">
               Upload
             </button>
           </div>
 
           {/* Language */}
-          <div className="flex overflow-x-auto px-3 py-2 space-x-2 border-b bg-gray-50 justify-around">
+          <div className="flex overflow-x-auto px-3 py-2 space-x-2 border-b bg-gray-50 justify-around text-txtColor">
             {["English", "Hindi", "Bengali"].map((lang) => (
               <button
                 key={lang}
                 onClick={() => setLanguage(lang)}
-                className={`px-4 py-2 border rounded ${language === lang ? "bg-bgColor text-white" : ""}`}
+                className={`px-4 py-2 border rounded ${language === lang ? "bg-bgColor text-bglightColor" : ""}`}
               >
                 {lang} 🎶
               </button>
@@ -346,7 +358,7 @@ export default function MobileLayout({
               {searchedSongs.map((song) => (
                 <button
                   key={song.id}
-                  className="p-3 border rounded text-left hover:bg-bgColor hover:text-white grid grid-cols-10 bg-white"
+                  className="p-3 border rounded text-left grid grid-cols-10 bg-bglightColor text-txtColor"
                   onClick={() => openSong(song)}
                 >
                   <span className="col-span-9">{song["Title*"]}</span>
@@ -364,13 +376,106 @@ export default function MobileLayout({
             </div>
             <Footer />
           </div>
-
+          
           {/* Bottom Tabs */}
           <div className={`fixed bottom-0 left-0 w-full text-white border-t transition-transform duration-300 
             ${showBottomTabs ? "translate-y-0" : "translate-y-full"}`}>
 
+
+            {showThemeMenu && (
+              <div className="relative bottom-2 z-50 flex flex-col items-center text-txtColor">
+                <div className="flex bg-bgColor rounded-tl-lg shadow-lg overflow-hidden">
+                  <ThemePanel setShowThemeMenu={setShowThemeMenu}/>
+                </div>     
+              </div>
+            )}
+
+            {showMoreMenu && (
+                <div className="fixed bottom-10 right-0 z-50 flex items-end text-txtColor">                
+                  <div
+                  className={`
+                    flex
+                    absolute
+                    right-full
+                    bottom-0
+                    bg-bgColor
+                    shadow-lg
+                    text-txtColor
+                    transition-transform duration-300 ease-in-out
+                    ${
+                        showMassMenu
+                          ? "translate-x-0 opacity-100"
+                          : "translate-x-20 opacity-0 pointer-events-none"
+                      }
+                  `}
+                >
+                  <button
+                    onClick={() => {
+                      setShowMoreMenu(false);
+                      setShowMassMenu(false);
+                      navigate("/englishmass");
+                    }}
+                    className="block text-left px-2 pl-4 py-3 whitespace-nowrap hover:bg-white hover:text-bgColor"
+                  >
+                    English
+                  </button>
+                    <span className="py-3">|</span>
+
+                  <button
+                    onClick={() => {
+                      setShowMoreMenu(false);
+                      setShowMassMenu(false);
+                      navigate("/bengalimass");
+                    }}
+                    className="block text-left px-2 py-3 whitespace-nowrap hover:bg-white hover:text-bgColor"
+                  >
+                    Bengali
+                  </button>
+                     <span className="py-3">|</span>
+                     
+                  <button
+                    onClick={() => {
+                      setShowMoreMenu(false);
+                      setShowMassMenu(false);
+                      navigate("/hindimass");
+                    }}
+                    className="block text-left px-2 py-3 whitespace-nowrap hover:bg-white hover:text-bgColor"
+                  >
+                    Hindi
+                  </button>
+                  </div>
+
+                  <div className="flex flex-col bg-bgColor rounded-tl-lg shadow-lg overflow-hidden">
+                    <button
+                      className="text-left px-4 py-3"
+                      onClick={() => {
+                        setShowMoreMenu(false);
+                        navigate("/updates");
+                      }}
+                    >
+                      🆕 Updates
+                    </button>
+
+                    <button
+                      className=" text-left px-4 py-3"
+                      onClick={() => {
+                      setShowMoreMenu(false)
+                      setShowThemeMenu(!showThemeMenu)}}
+                    >
+                      🎨 Themes
+                    </button>
+                    <button
+                      className=" text-left px-4 py-3 flex justify-between items-center"
+                      onClick={() => setShowMassMenu(!showMassMenu)}
+                    >
+                      <span>⛪ Holy Mass</span>
+                    </button>
+                  </div>
+                </div>
+            )}
+
             {/* navigation  */}
-            <div className="flex">
+            <div className="flex text-txtColor">
               <button onClick={() => navigate("/categories")} className="flex-1 py-2 bg-bgColor/95">
                 Categories
               </button>
@@ -379,8 +484,11 @@ export default function MobileLayout({
                 Favorites
               </button>
 
-              <button onClick={() => navigate("/updates")} className="flex-1 py-2 bg-bgColor/95">
-                Updates
+              <button
+                onClick={() => setShowMoreMenu(!showMoreMenu)}
+                className="flex-1 py-2 bg-bgColor/95 relative"
+              >
+                More
               </button>
             </div>
           </div>

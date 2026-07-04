@@ -9,3 +9,10 @@
 .animate-slideUp {
   animation: slideUp 0.3s ease;
 }
+
+:root{
+  /* --bgColor: 3 122 24; */
+  --bgColor: 255 144 18;
+  --txtColor: 255, 218, 175;
+  --bglightColor: 255 212 162;
+}
