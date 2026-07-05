@@ -10,9 +10,23 @@
   animation: slideUp 0.3s ease;
 }
 
-:root{
-  /* --bgColor: 3 122 24; */
+/* :root{
+  --bgColor: 3 122 24;
   --bgColor: 255 144 18;
   --txtColor: 255, 218, 175;
   --bglightColor: 255 212 162;
+} */
+
+
+:root{
+  --bgColor: 253 135 30;
+  --txtColor: 0 0 0;
+  --bglightColor: 253 222 198;
+  }
+
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }

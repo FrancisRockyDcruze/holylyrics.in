@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { HexColorPicker } from "react-colorful";
 
 const DEFAULT_THEME = {
-  background: "#037a18",
+  background: "#fd871e",
   text: "#000000",
-  light: "#c1fab6",
+  light: "#fddec6",
 };
+// fd871e
 
 export default function ThemePanel({setShowThemeMenu}) {
     const [activeColor, setActiveColor] = useState("background");

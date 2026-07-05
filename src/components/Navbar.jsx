@@ -20,9 +20,6 @@ export default function Navbar() {
       </div>
 
       <div className="flex gap-4 mr-2 justify-center items-center">
-        {token && (
-        <Logout setIsAdmin={setIsAdmin}/>
-        )}
         <Link to="/">H⛪me</Link>
         <span className="text-bglightColor">|</span>
         <Link to={isAdmin ? "/favorites" : "#"}
@@ -54,8 +51,34 @@ export default function Navbar() {
         </button>
         <span className="text-bglightColor">|</span>
         <button onClick={() => {setShowMassMenu(!showMassMenu);}}>Holy🙏Mass</button>
-        {showMassMenu && (
-                <div className="fixed top-[6rem] right-20 z-50 flex items-end text-txtColor">                
+        <span className="text-bglightColor">|</span>
+        <button onClick={() => {setShowTheme(!showTheme);}}>🎨Themes</button>
+        {token && (
+          <Logout setIsAdmin={setIsAdmin}/>
+        )}
+      </div>
+      
+      {showModal && (
+        <LoginCard 
+          onClose={() => setShowModal(false)} 
+          onSuccess={() => {
+            setShowModal(false);
+            navigate("/uploadSong");
+            setIsAdmin(true);
+          }}
+        />
+      )}
+
+      {showTheme && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-bgColor w-fit m-auto">
+          <div className="w-fit max-h-[90vh] overflow-auto">
+            <ThemePanel setShowThemeMenu={setShowTheme} />
+          </div>
+        </div>
+      )}
+
+      {showMassMenu && (
+                <div className="fixed top-[7rem] right-[10%] z-50 flex items-end text-txtColor">                
                   <div
                   className="flex absolute right-full bottom-0 bg-bgColor shadow-lg text-txtColor transition-transform duration-300 ease-in-out rounded-tl-lg">
                   <button
@@ -91,28 +114,6 @@ export default function Navbar() {
                   </button>
                   </div>
                 </div>
-            )}
-        <span className="text-bglightColor">|</span>
-        <button onClick={() => {setShowTheme(!showTheme);}}>🎨Themes</button>
-      </div>
-      
-      {showModal && (
-        <LoginCard 
-          onClose={() => setShowModal(false)} 
-          onSuccess={() => {
-            setShowModal(false);
-            navigate("/uploadSong");
-            setIsAdmin(true);
-          }}
-        />
-      )}
-
-      {showTheme && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-bgColor w-fit m-auto">
-          <div className="w-fit max-h-[90vh] overflow-auto">
-            <ThemePanel setShowThemeMenu={setShowTheme} />
-          </div>
-        </div>
       )}
     </nav>
   );

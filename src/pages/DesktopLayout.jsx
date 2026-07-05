@@ -11,7 +11,6 @@ import {
 import { saveFavoriteToSheet } from "../services/fav_api";
 import { useNavigate } from "react-router-dom";
 import { checkAccess } from "../services/checkAdminAccess";
-// import LoginCard from "../components/Admin_login_Card";
 import { AdminAccess } from "../services/adminAccess";
 
 export default function Landing() {
