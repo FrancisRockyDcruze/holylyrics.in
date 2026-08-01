@@ -54,7 +54,7 @@ export default function LoginCard({ onClose, onSuccess }) {
 
         <input
           type="tel"
-          placeholder="Enter Phone Number"
+          placeholder="Enter PIN"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           className="border p-2 w-full mb-4 rounded"

@@ -14,6 +14,10 @@ import LoginCard from "../components/Admin_login_Card";
 import { getInitials } from "../services/checkAdminAccess";
 import Logout from "../components/Admin_logout";
 import ThemePanel from "../components/Theme/ThemePanel";
+import LanguageTabs from "../components/SongBrowser/LanguageTabs";
+import SearchSong from "../components/SongBrowser/SearchSong";
+import SongList from "../components/SongBrowser/SongList";
+import ShowLyrics from "../components/SongBrowser/ShowLyrics";
 
 export default function MobileLayout({
   songs,
@@ -23,7 +27,9 @@ export default function MobileLayout({
   setSearch,
   toggleFavorite,
   loading,
-  reload
+  reload,
+  isAdmin,
+  setIsAdmin
 }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -36,11 +42,8 @@ export default function MobileLayout({
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showMassMenu, setShowMassMenu] = useState(false);
   const [showThemeMenu, setShowThemeMenu] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(!!localStorage.getItem("admin_token"));
 
-  // useState(Boolean(localStorage.getItem("admin_token"))
   const handleLoginSuccess = () => {
-    // setIsAdmin(true);
     setIsAdmin(!!localStorage.getItem("admin_token"));
   };
 
@@ -58,29 +61,19 @@ export default function MobileLayout({
   };
 
   const filteredSongs = filterSongsByLanguage(songs, language);
-  const searchedSongs = filteredSongs.filter((song) =>
-    song.Searchkey.toLowerCase().includes(search.toLowerCase())
-  );
+  
   const allTags = getAllTags(songs);
-
-  // ---------------- Navigation ----------------
-  const openSong = (song) => {
-    setSelectedSong(song);
-    navigate(`/song/${song.id}`);
-  };
 
   const goBack = () => {
     navigate(-1);   // better than "/"
   };
 
   const categories = selectedSong?.["category*"]
-  ?.split(",")
-  .map(tag => tag.trim())
+    ?.split(",")
+    .map(tag => tag.trim())
 
   const handleTagClick = (tag) => {
     const catSongs = getCategorySongs(songs, tag); // true = return all songs
-    // console.log(catSongs);
-
     setSelectedCategory(tag);
     setCategorySongs(catSongs);
   };
@@ -93,13 +86,21 @@ export default function MobileLayout({
   const isUpdates = path === "/updates";
   const isUpload = path === "/upload";
   const isCategoryOverlay = path === "/category";
-  // const bengaliMass = path == "bengalimass";
 
   //admin access when click upload button
   const [showModal, setShowModal] = useState(false);
   const [userId, setUserId] = useState("");
   const [phone, setPhone] = useState("");
   const menuRef = useRef(null);
+
+  const searchedSongs = filteredSongs.filter(song =>
+    song.Searchkey.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const openSong = (song) => {
+      setSelectedSong(song);
+      navigate(`/song/${song.id}`);
+  };
 
   //logout Admin
   const handleLogout = () =>{
@@ -114,61 +115,14 @@ export default function MobileLayout({
     setShowMassMenu(false);
   }, [location.pathname]);
 
-
   // ---------------- Overlays ----------------
   const renderOverlay = () => {
     if (!isSong && !isCategories && !isFavorites && !isUpdates && !isUpload && !isCategoryOverlay) return null;
 
     if (isSong) {
       return (
-        <div className="fixed inset-0 bg-white z-50 flex flex-col">
-          <div className={`grid ${isAdmin ? "grid-cols-[15%_75%_10%]" : "grid-cols-[15%_85%]"} items-center p-4 border-b bg-bgColor`}>
-            <button onClick={goBack} className="text-txtColor text-sm border rounded px-3 py-1 bg-bglightColor">Back</button>
-            <h2 className="text-xl text-bglightColor font-bold mr-8 text-center">{selectedSong?.["Title*"]}</h2>
-            {isAdmin && (
-              <span
-              className="col-span-1 cursor-pointer text-xl"
-              onClick={(e) => {
-                // e.stopPropagation();
-                toggleFavorite(selectedSong);
-
-                // Update the selectedSong reference to trigger re-render
-                setSelectedSong((prev) => ({
-                  ...prev,
-                  "Fav Added": prev["Fav Added"] === 1 ? 0 : 1,
-                }));
-              }}
-            >
-              {selectedSong?.["Fav Added"] === 1 ? "❤️" : "🤍"}
-            </span>
-            )}
-          </div>
-
-          <div className="p-4 overflow-y-auto flex-1">
-            <div
-              className="text-txtColor whitespace-pre-wrap text-center min-h-screen"
-              dangerouslySetInnerHTML={{ __html: selectedSong?.["lyrics*"] }}
-            />
-             <Footer/>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-2 my-3">
-              {categories?.map((tag, index) => (
-                <div
-                  key={index}
-                  onClick={() => {
-                        handleTagClick(tag); // populate categorySongs & selectedCategory
-
-                    navigate("/category")}}
-                  className="bg-bgColor text-txtColor px-2 py-1 rounded text-sm font-bold cursor-pointer select-none"
-                >
-                  🏷️ {tag}
-                </div>
-              ))}
-             
-          </div>
-        </div>
-      );
+          <ShowLyrics isAdmin={isAdmin} goBack={goBack} selectedSong={selectedSong} categories={categories}/>
+            );
     }
 
     if (isCategories) {
@@ -291,7 +245,6 @@ export default function MobileLayout({
         </div>
       );
     }
-
   };
 
   const { id } = useParams();
@@ -329,63 +282,14 @@ export default function MobileLayout({
           </div>
 
           {/* Language */}
-          <div className="flex overflow-x-auto px-3 py-2 space-x-2 border-b bg-gray-50 justify-around text-txtColor">
-            {["English", "Hindi", "Bengali"].map((lang) => (
-              <button
-                key={lang}
-                onClick={() => setLanguage(lang)}
-                className={`px-4 py-2 border rounded ${language === lang ? "bg-bgColor" : ""}`}
-              >
-                {lang} 🎶
-              </button>
-            ))}
-          </div>
+          <LanguageTabs language={language} setLanguage={setLanguage}/>
 
           {/* Body */}
           <div className=" flex-1 overflow-y-auto px-4 py-2" onScroll={handleScroll}>
-            <div className="relative">
-            <input
-              type="text"
-              placeholder="Search song..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full p-3 border rounded mb-4"
-            />
-            {search && (
-              <button
-                onClick={() => setSearch("")}
-                className="absolute right-3 top-6 -translate-y-1/2 
-                          flex items-center justify-center 
-                          rounded px-2 bg-gray-200 hover:bg-gray-300 text-sm"
-              >
-                clear
-              </button>
-            )}
-            </div>
-
-            <div className="flex flex-col space-y-2">
-              {searchedSongs.map((song) => (
-                <button
-                  key={song.id}
-                  className="p-3 border rounded text-left grid grid-cols-10 bg-bglightColor text-txtColor"
-                  onClick={() => openSong(song)}
-                >
-                  <span className="col-span-9">{song["Title*"]}</span>
-                  
-                  {isAdmin && (
-                      <span
-                      className="col-span-1 cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFavorite(song);
-                      }}
-                    >
-                      {song["Fav Added"] === 1 ? "❤️" : "🤍"}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
+            <SearchSong search={search} setSearch={setSearch} />
+            
+             {/* songs list */}
+            <SongList searchedSongs={searchedSongs} isAdmin={isAdmin} openSong={openSong}/>
             <Footer />
           </div>
           
@@ -424,7 +328,7 @@ export default function MobileLayout({
                     onClick={() => {
                       setShowMoreMenu(false);
                       setShowMassMenu(false);
-                      navigate("/englishmass");
+                      navigate("/mass/english");
                     }}
                     className="block text-left px-2 whitespace-nowrap"
                   >
@@ -436,7 +340,7 @@ export default function MobileLayout({
                     onClick={() => {
                       setShowMoreMenu(false);
                       setShowMassMenu(false);
-                      navigate("/bengalimass");
+                      navigate("/mass/bengali");
                     }}
                     className="block text-left px-2 whitespace-nowrap"
                   >
@@ -448,7 +352,7 @@ export default function MobileLayout({
                     onClick={() => {
                       setShowMoreMenu(false);
                       setShowMassMenu(false);
-                      navigate("/hindimass");
+                      navigate("/mass/hindi");
                     }}
                     className="block text-left px-2 py-3 whitespace-nowrap"
                   >
@@ -491,7 +395,7 @@ export default function MobileLayout({
                 Categories
               </button>
 
-              <button onClick={() => isAdmin ? navigate("/favorites") : alert("Require Admin Access!")} className="flex-1 py-2 bg-bgColor/95">
+              <button onClick={() => navigate("/favorites")} className="flex-1 py-2 bg-bgColor/95">
                 Favorites
               </button>
 

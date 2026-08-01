@@ -9,6 +9,7 @@ import {
   Droppable,
   Draggable,
 } from "@hello-pangea/dnd";
+import { AdminAccess } from "../services/adminAccess";
 
 export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFav,isMobilePreview  }) {
     const [songs, setSongs] = useState([]);
@@ -75,9 +76,9 @@ export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFa
         // console.log(localStorage)
         const token = localStorage.getItem("admin_token");
 
-        if (!token) {
-        navigate("/");
-        }
+        // if (!token) {
+        // navigate("/");
+        // }
     }, []);
 
     let leftCol_Arr = [];
@@ -127,6 +128,8 @@ export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFa
         printPDF();
   };
 
+  const isAdmin = AdminAccess();
+
   return (
     <div className="grid grid-rows-[auto_1fr_auto] min-h-screen">
       {/* MAIN */}
@@ -158,23 +161,24 @@ export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFa
                         {(provided, snapshot) => (
                         <li
                             ref={provided.innerRef}
-                            {...provided.draggableProps}
+                            {...(isAdmin ? provided.draggableProps : {})}
                             className={`flex items-center justify-between p-2 border rounded bg-white ${
                             snapshot.isDragging ? "bg-bglightColor" : ""
                             }`}
                         >
                             <div className="flex items-center gap-2">
+                            {isAdmin && (
                             <span
                                 {...provided.dragHandleProps}
                                 className="cursor-grab text-gray-500"
                             >
                                 ≡
                             </span>
-
+                            )}
                             {/* Title with removing favourite */}
                             <span>{song["Title*"]}</span>
                             </div>
-                            <span
+                            {isAdmin && (<span
                           onClick={(e) => {
                             e.stopPropagation(); // IMPORTANT (prevents selecting song)
                             toggleFavorite(song);
@@ -182,7 +186,7 @@ export default function FabDesktopLayout({ songsVal, loadingVal, reload, closeFa
                           className="cursor-pointer"
                         >
                           {song["Fav Added"] == 1 ? "❤️" : "🤍"}
-                        </span>
+                        </span>)}
                         </li>
                         )}
                     </Draggable>

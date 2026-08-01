@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { LANGUAGES } from "../config.js";
 
 export default function SelectLanguage()
 {
@@ -27,7 +28,7 @@ export default function SelectLanguage()
                     <button
                         className="text-left px-4 py-2 border-b"
                         onClick={() => {
-                          navigate("/englishmass");
+                          navigate(`/mass/${LANGUAGES.english.route}`);
                         }}
                     >
                         English
@@ -36,7 +37,7 @@ export default function SelectLanguage()
                     <button
                         className="text-left px-4 py-2 border-b"
                         onClick={() => {
-                          navigate("/bengalimass");
+                          navigate(`/mass/${LANGUAGES.bengali.route}`);
                         }}
                     >
                         Bengali
@@ -45,7 +46,7 @@ export default function SelectLanguage()
                     <button
                         className="text-left px-4 py-2"
                          onClick={() => {
-                          navigate("/hindimass");
+                          navigate(`/mass/${LANGUAGES.hindi.route}`);
                         }}
                     >
                         Hindi

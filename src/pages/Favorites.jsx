@@ -4,9 +4,10 @@ import FavDesktopLayout from "./FavDesktopLayout";
 import FavMobileLayout from "./FavMobileLayout";
 import { isMobile } from "../utils/deviceCheck"; // simple utility to detect mobile
 
-export default function Favorites() {
+export default function Favorites({isAdmin}) {
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedSong, setSelectedSong] = useState(null);
 
   // Load all songs
   const loadSongs = async () => {
@@ -27,7 +28,15 @@ export default function Favorites() {
 
   // Detect mobile or desktop
   return isMobile() ? (
-    <FavMobileLayout songs={songs} loading={loading} reload={loadSongs} isMobilePreview = "true" />
+    <FavMobileLayout 
+      songs={songs}
+      loading={loading}
+      reload={loadSongs}
+      isMobilePreview={true}
+      isAdmin={isAdmin}
+      selectedSong={selectedSong}
+      setSelectedSong={setSelectedSong}
+    />
   ) : (
     <FavDesktopLayout songs={songs} loading={loading} reload={loadSongs} isMobilePreview = "false"/>
   );

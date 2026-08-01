@@ -5,8 +5,9 @@ import { pdfFormats } from "../utils/pdfFormat";
 import { useNavigate } from "react-router-dom";
 import "../print.css";
 import Footer from "../components/Footer";
+import ShowLyrics from "../components/SongBrowser/ShowLyrics";
 
-export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMobilePreview}) {
+export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMobilePreview,isAdmin, selectedSong, setSelectedSong}) {
   const [fav, setFav] = useState([]);
   const [reorderMode, setReorderMode] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -17,14 +18,15 @@ export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMo
   const [noOfLine, setNoOfLine] = useState(53);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState("");
+
+   const openSong = (song) => {
+      setSelectedSong(song);
+      // navigate(`/song/${song.id}`);
+  };
 
   useEffect(() => {
-      // console.log(localStorage)
-      const token = localStorage.getItem("admin_token");
-
-      if (!token) {
-      navigate("/");
-      }
+      setToken(localStorage.getItem("admin_token"));
   }, []);
   
   // Load favorites and sort by position
@@ -103,24 +105,35 @@ export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMo
                 <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
             </div>
         )}
+        <div className="grid grid-cols-[15%_70%_15%]  items-center p-4 border-b bg-bgColor">
+          {/* Left */}
+          <div className="flex justify-start">
+              <button
+                  onClick={() => navigate("/")}
+                  className="px-2 py-1 border rounded bg-bglightColor"
+              >
+                  Home
+              </button>
+          </div>
 
-      {/* Header */}
-      <div className="flex justify-between items-center p-4 border-b bg-bgColor">
-         <button
-            // onClick={closeFav}
-            onClick={() => navigate("/")}
-            className="px-2 py-1 border rounded bg-bglightColor"
-            
-        >Home
-        </button>
-        <h2 className="text-2xl text-bglightColor font-bold">Holy Lyrical</h2>
-        <button
-          onClick={() => setReorderMode(!reorderMode)}
-          className="px-1 py-1 border rounded bg-bglightColor"
-        >
-          {reorderMode ? "Done" : "Reorder"}
-        </button>
-      </div>
+          {/* Center */}
+          <h2 className="text-xl text-bglightColor font-bold text-center">
+              Favourite List
+          </h2>
+
+          {/* Right */}
+          <div className="flex justify-end">
+              {token && (
+                  <button
+                      onClick={() => setReorderMode(!reorderMode)}
+                      className="px-2 py-1 border rounded bg-bglightColor"
+                  >
+                      {reorderMode ? "Done" : "Reorder"}
+                  </button>
+              )}
+          </div>
+
+</div>
 
       {/* Total Favorites */}
       <p className="px-4 py-2 text-gray-700 font-semibold">
@@ -149,6 +162,7 @@ export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMo
                         <li
                           ref={provided.innerRef}
                           {...(reorderMode ? provided.draggableProps : {})}
+                          onClick={() => openSong(song)}
                           className="flex justify-between items-center p-2 border rounded bg-white"
                         >
                           <div className="flex items-center gap-2">
@@ -162,7 +176,7 @@ export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMo
                             )}
                             <span>{song["Title*"]}</span>
                           </div>
-                          <span
+                          {token && (<span
                           onClick={(e) => {
                               e.stopPropagation(); // IMPORTANT (prevents selecting song)
                               toggleFavorite(song);
@@ -170,7 +184,7 @@ export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMo
                             className="cursor-pointer"
                           >
                             {song["Fav Added"] == 1 ? "❤️" : "🤍"}
-                          </span>
+                          </span>)}
                         </li>
                       )}
                     </Draggable>
@@ -203,9 +217,9 @@ export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMo
           <div className="flex justify-between items-center p-4 border-b bg-bglightColor">
             <button
               onClick={() => setPreviewOpen(false)}
-              className="px-3 py-1 border rounded"
+              className="px-2 py-1 border rounded bg-bgColor"
             >
-              ⬅ Back
+              Back
             </button>
             <h2 className="text-xl font-bold">Preview</h2>
             <button
@@ -290,10 +304,6 @@ export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMo
           </div>
           )}
             
-          {/* Export / Print PDF Button */}
-          {/* <div className="fixed bottom-4 left-0 w-full flex justify-center z-50">
-            
-          </div> */}
           <div className="bg-bglightColor my-2">
             <label className="text-sm font-bold flex items-center justify-center px-1">Adjust Lines</label>
                 <input
@@ -309,6 +319,17 @@ export default function FavMobileLayout({ songs, spinning, reload, closeFav,isMo
         </div>
         <Footer/>
         </>
+      )}
+
+      {selectedSong && (
+          <ShowLyrics
+              isAdmin={isAdmin}
+              goBack={() => setSelectedSong(null)}
+              selectedSong={selectedSong}
+              categories={selectedSong.categories}
+              toggleFavorite={toggleFavorite}
+              setSelectedSong={setSelectedSong}
+          />
       )}
     </div>
   );
